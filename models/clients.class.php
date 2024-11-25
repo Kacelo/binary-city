@@ -100,20 +100,38 @@ class Client extends Database
         // check if the clientID exists in the database
         $contactCount = $this->countLinkedContacts($client_id);
         try {
-            if($contactCount == 0){
+            if ($contactCount == 0) {
                 // return an empty array if there are no records in the client contacts table
                 return [];
-            }elseif($contactCount>0){
-                $sql ="SELECT * FROM client_contacts WHERE client_id =?";
+            } elseif ($contactCount > 0) {
+                $sql = "SELECT * FROM client_contacts WHERE client_id =?";
                 $stmt = $this->connect()->prepare($sql);
                 $stmt->execute([$client_id]);
                 return $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
-        }  catch (PDOException $e) {
+        } catch (PDOException $e) {
             // Handle potential database errors
             echo "Error: " . $e->getMessage();
             return [];
         }
     }
+    public function fetchClientsWithLinkedContacts()
+    {
+        $sql = "SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts
+                FROM clients cl
+                LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
+                GROUP BY cl.client_id
+                ORDER BY cl.client_name ASC;";
+        try {
+            $stmt = $this->connect()->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Handle potential database errors
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+
     // public function fetchContactInfo()
 }

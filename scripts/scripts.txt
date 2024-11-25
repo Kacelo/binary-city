@@ -42,3 +42,9 @@ INNER JOIN client_contacts cc ON cl.client_id = cc.client_id
 INNER JOIN contacts co ON cc.contact_id = co.contact_id
 WHERE cc.contact_id = 2
 ORDER BY cl.client_name ASC;
+
+SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts
+FROM clients cl
+LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
+GROUP BY cl.client_id
+ORDER BY cl.client_name ASC;
