@@ -9,7 +9,7 @@ CREATE TABLE clients (
 CREATE TABLE contacts (
     contact_id INT AUTO_INCREMENT PRIMARY KEY,
     contact_name VARCHAR(255) NOT NULL,
-    contact_surnaname VARCHAR(255) NOT NULL,
+    contact_surname VARCHAR(255) NOT NULL,
     contact_email VARCHAR(255) NOT NULL UNIQUE
 )
 // Our Join Table
@@ -25,3 +25,26 @@ CREATE TABLE client_contacts (
 
 INSERT INTO client_contacts (client_id, contact_id)
 VALUES(1, 1);
+
+// script to get values from the 3 tables using inner joins and client id
+// get values that belong to a client
+SELECT cl.client_name, cl.client_code, cc.client_id,co.contact_name
+FROM contacts co
+INNER JOIN client_contacts cc ON co.contact_id = cc.contact_id
+INNER JOIN clients cl ON cc.client_id = cl.client_id
+WHERE cc.client_id = 2
+ORDER BY cl.client_name;
+// a query to get values from the 3 tables using inner joins with the contact ID as a REFERENCE
+//get values that belong to a contact
+SELECT cl.client_name, cl.client_code, cc.client_id,co.contact_name, co.contact_id
+FROM clients cl
+INNER JOIN client_contacts cc ON cl.client_id = cc.client_id
+INNER JOIN contacts co ON cc.contact_id = co.contact_id
+WHERE cc.contact_id = 2
+ORDER BY cl.client_name ASC;
+
+SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts
+FROM clients cl
+LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
+GROUP BY cl.client_id
+ORDER BY cl.client_name ASC;
