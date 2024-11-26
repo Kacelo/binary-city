@@ -43,8 +43,28 @@ INNER JOIN contacts co ON cc.contact_id = co.contact_id
 WHERE cc.contact_id = 2
 ORDER BY cl.client_name ASC;
 
+//query to get all clients with their counted contacts
 SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts
 FROM clients cl
 LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
 GROUP BY cl.client_id
+ORDER BY cl.client_name ASC;
+
+SELECT * contacts co
+RIGHT JOIN client_contacts cc ON co.contact_id = cc.contact_id
+WHERE cc.contact_id = 2
+ORDER BY co.contact_id, cc.client_id;
+
+//query to return full name and email of associated contacts
+SELECT CONCAT(co.contact_name, " ", co.contact_surname) AS full_name, co.contact_email
+FROM contacts co
+RIGHT JOIN client_contacts cc ON co.contact_id = cc.contact_id
+WHERE cc.client_id = 1
+ORDER BY full_name ASC;
+
+//query to return the names and codes of a contact's linked clients 
+SELECT cl.client_name, cl.client_code
+FROM clients cl
+RIGHT JOIN client_contacts cc ON cl.client_id = cc.client_id
+WHERE cc.contact_id = 2 
 ORDER BY cl.client_name ASC;

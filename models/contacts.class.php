@@ -2,7 +2,7 @@
 
 require_once '../config/database.php';
 
-class Client extends Database
+class Contact extends Database
 {
 
     public function checkIfEmailExists ($contact_email){
