@@ -5,27 +5,29 @@ require_once '../config/database.php';
 class Contact extends Database
 {
 
-    public function checkIfEmailExists ($contact_email){
+    public function checkIfEmailExists($contact_email)
+    {
         $sql = "SELECT * FROM contacts WHERE contact_male =?";
         try {
             $stmt = $this->connect()->prepare($sql);
             $stmt->execute([$contact_email]);
             if ($stmt->rowCount() > 0) {
-                return true; 
+                return true;
             } else {
-                return false; 
+                return false;
             }
         } catch (PDOException $e) {
             // Handle potential database errors
             echo "Error: " . $e->getMessage();
         }
     }
-    public function createContact($contact_name, $contact_surname, $contact_email) {
+    public function createContact($contact_name, $contact_surname, $contact_email)
+    {
         // SQL query to insert the client
         // check if contact email already exists
         if ($this->checkIfEmailExists($contact_email)) {
             return "Error: Email already exists!";
-        }        
+        }
         $sql = "INSERT INTO contacts (contact_name, contact_surname, contact_email) VALUES (?, ?, ?)";
 
         // Database connection and execution
@@ -36,6 +38,21 @@ class Contact extends Database
         } catch (PDOException $e) {
             // Handle potential database errors
             echo "Error: " . $e->getMessage();
+        }
+    }
+    public function fetchAllContacts()
+    {
+        $sql = "SELECT *
+        FROM contacts
+        ORDER BY contact_name ASC;";
+        try {
+            $stmt = $this->connect()->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Handle potential database errors
+            echo "Error: " . $e->getMessage();
+            return [];
         }
     }
 }

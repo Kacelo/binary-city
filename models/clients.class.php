@@ -63,7 +63,7 @@ class Client extends Database
         // Generate the client code using the createClientCode function
         $clientCode = $this->createClientCode($name);
 
-        // Then we create our unique aplhanumeric code
+        // Then we create our unique alphanumeric code
         $uniqueCode = $this->createUniqueAlphanumericCode($clientCode);
 
         // SQL query to insert the client
@@ -71,14 +71,59 @@ class Client extends Database
 
         // Database connection and execution
         try {
-            $stmt = $this->connect()->prepare($sql);
+            $conn = $this->connect();
+            $stmt = $conn->prepare($sql);
             $stmt->execute([$name, $uniqueCode]);
-            echo "Client successfully created with code: " . $clientCode;
+            $last_id = $conn->lastInsertId();
+
+            if ($last_id != null) {
+                echo "last_id: " . $last_id; // Debugging last_insert_id
+                $fetchsql = "SELECT * FROM clients WHERE client_id=?";
+                $stmt = $conn->prepare($fetchsql);
+
+                if ($stmt->execute([$last_id])) {
+                    $client = $stmt->fetch(PDO::FETCH_ASSOC);
+                    echo "Client successfully created with code: " . $client['client_code'];
+                    return $client; // Return single client record
+                } else {
+                    echo "Error: Unable to fetch client data.";
+                    return null;
+                }
+            }
+
+            return null;
         } catch (PDOException $e) {
             // Handle potential database errors
             echo "Error: " . $e->getMessage();
+            return null; // Return null in case of error
         }
     }
+    public function getLastCreated()
+    {
+        try {
+            $conn = $this->connect();
+    
+            // Ensure that the previous query was an insert and the connection is valid
+            $last_id = $conn->lastInsertId();
+            
+            // Check if the last ID is valid
+            if ($last_id) {
+                echo "Last saved ID was: " . $last_id;
+                return $last_id;  // Return the ID of the last inserted row
+            } else {
+                // Handle the case where no insert has occurred
+                echo "No recent insert found.";
+                return null;
+            }
+        } catch (PDOException $e) {
+            // Handle potential database errors
+            error_log("Database error: " . $e->getMessage()); // Log the error
+            echo "Error: " . $e->getMessage(); // Optionally show the error message to the user
+            return null; // Return null in case of error
+        }
+    }
+    
+
     public function countLinkedContacts($client_id)
     {
         $sql = "SELECT COUNT(*) AS contact_count FROM client_contacts WHERE client_id =?";
@@ -117,6 +162,7 @@ class Client extends Database
     }
     public function fetchClientsWithLinkedContacts()
     {
+
         $sql = "SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts
                 FROM clients cl
                 LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
@@ -132,9 +178,10 @@ class Client extends Database
             return [];
         }
     }
-    public function linkClientsToContacts($client_id, $contact_id) {
+    public function linkClientsToContacts($client_id, $contact_id)
+    {
 
-        $sql= "INSERT INTO client_contacts (contact_id, client_id)  VALUES (?,?)";
+        $sql = "INSERT INTO client_contacts (contact_id, client_id)  VALUES (?,?)";
         try {
             $stmt = $this->connect()->prepare($$sql);
             $stmt->execute([$client_id, $contact_id]);
@@ -143,7 +190,6 @@ class Client extends Database
             // Handle potential database errors
             echo "Error: " . $e->getMessage();
         }
-
     }
 
     // public function fetchContactInfo()

@@ -19,3 +19,11 @@ class ContactController extends Contact
         $this->createContact($this->contact_name, $this->contact_surname, $this->contact_email);
     }
 }
+
+class ContactFetchAllController extends Contact
+{
+    public function fetchAllContacts()
+    {
+        return $this->fetchAllContacts();
+    }
+}

@@ -14,3 +14,7 @@ include "../controller/contact-controller.php";
 header("location: ../index.php?error=none");
 
 }
+
+$contactFetchAllController = new ContactFetchAllController();
+
+$contacts = $contactFetchAllController->fetchAllContacts();

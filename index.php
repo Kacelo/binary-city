@@ -11,59 +11,7 @@
 
 <body>
     <!-- <?php ?> -->
-    <h1>Sign Up</h1>
-    <ul class="nav nav-tabs">
-        <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#home">General</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1">Contacts</a></li>
-    </ul>
-
-    <div class="tab-content">
-        <div id="home" class="tab-pane active">
-            <form action="includes/clients.inc.php" method="post">
-                <div class="mb-3">
-                    <label for="client_name" class="form-label">Client Name</label>
-                    <input type="text" class="form-control" id="client_name" aria-describedby="emailHelp" name="client_name">
-                </div>
-                <!-- <div class="mb-3">
-                    <label for="disabledTextInput" class="form-label">Client Code</label>
-                    <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
-                </div> -->
-                <button type="submit" class="btn btn-primary" name="submit">Save</button>
-                <!-- <button type="submit" class="btn btn-success">Link a contact</button> -->
-    
-        </div>
-        <div id="menu1" class="tab-pane fade">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td colspan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+  
     <script>
         // const triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'));
         // console.log('List', triggerTabList)
