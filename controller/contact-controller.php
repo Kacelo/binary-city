@@ -1,6 +1,6 @@
 <?php
 
-class ClientController extends Client
+class ContactController extends Contact
 {
     private $contact_name;
     private $contact_surname;
@@ -14,7 +14,7 @@ class ClientController extends Client
         $this->contact_email = $contact_email;
     }
 
-    public function registerClient()
+    public function registerContact()
     {
         $this->createContact($this->contact_name, $this->contact_surname, $this->contact_email);
     }

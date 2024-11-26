@@ -132,6 +132,19 @@ class Client extends Database
             return [];
         }
     }
+    public function linkClientsToContacts($client_id, $contact_id) {
+
+        $sql= "INSERT INTO client_contacts (contact_id, client_id)  VALUES (?,?)";
+        try {
+            $stmt = $this->connect()->prepare($$sql);
+            $stmt->execute([$client_id, $contact_id]);
+            echo "contact successfully linked with to client: ";
+        } catch (PDOException $e) {
+            // Handle potential database errors
+            echo "Error: " . $e->getMessage();
+        }
+
+    }
 
     // public function fetchContactInfo()
 }
