@@ -1,20 +1,17 @@
 <?php
 
-if(isset($_POST["submit"]))
-{
-$username = $_POST["username"];
-$pword = $_POST["pword"];
-$pwordRepeat = $_POST["pwordRepeat"];
-$email = $_POST["email"];
-
-include "../config/database.php";
+require_once '../config/database.php';
 include "../models/contacts.class.php";
 include "../controller/contact-controller.php";
-
-header("location: ../index.php?error=none");
-
+if (isset($_POST["submit"])) {
+    $contact_name = $_POST["contact_name"];
+    $contact_surname = $_POST["contact_surname"];
+    $contact_email = $_POST["contact_email"];
+    header("location: ../index.php?error=none");
 }
 
 $contactFetchAllController = new ContactFetchAllController();
 
 $contacts = $contactFetchAllController->fetchAllContacts();
+var_dump($contacts);
+

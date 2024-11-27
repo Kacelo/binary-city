@@ -1,11 +1,12 @@
 <?php include 'header.php';
 require_once '../includes/clients.inc.php';
-echo $clients;
+// echo $clients;
 ?>
 <div class="container-md mt-5">
-
+<h1>Clients View</h1>
     <table class="table table-striped-columns table-bordered">
 
+    <a href="../../binary-city/views/clients-form.php" class="btn btn-primary">Add new client</a>
 
         <?php if (!empty($clients)) : ?>
             <thead>

@@ -50,6 +50,22 @@ LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
 GROUP BY cl.client_id
 ORDER BY cl.client_name ASC;
 
+SELECT 
+    CONCAT(co.contact_name, " ", co.contact_surname) AS full_name,
+    co.contact_email,
+    COUNT(cc.client_id) AS linked_clients_count
+FROM 
+    contacts co
+LEFT JOIN 
+    client_contacts cc 
+ON 
+    co.contact_id = cc.contact_id
+GROUP BY 
+    co.contact_id
+ORDER BY 
+    full_name ASC;
+
+
 SELECT * contacts co
 RIGHT JOIN client_contacts cc ON co.contact_id = cc.contact_id
 WHERE cc.contact_id = 2
@@ -68,3 +84,22 @@ FROM clients cl
 RIGHT JOIN client_contacts cc ON cl.client_id = cc.client_id
 WHERE cc.contact_id = 2 
 ORDER BY cl.client_name ASC;
+
+
+// fetch contacts that have not been added by the client 
+SELECT c.contact_id, c.contact_name, c.contact_surname, c.contact_email
+FROM contacts c
+LEFT JOIN client_contacts cc 
+ON c.contact_id = cc.contact_id AND cc.client_id = ?
+WHERE cc.client_id IS NULL
+ORDER BY c.contact_name ASC;
+
+// query to fetch clients that are still available to add 
+SELECT cl.client_id, cl.client_name
+FROM clients cl
+LEFT JOIN client_contacts cc 
+ON cl.client_id = cc.client_id AND cc.contact_id = ?
+WHERE cc.contact_id IS NULL
+ORDER BY cl.client_name ASC;
+
+

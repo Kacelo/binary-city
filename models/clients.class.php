@@ -1,6 +1,7 @@
 <?php
 
 require_once '../config/database.php';
+// header('Content-Type: application/json'); // Ensure JSON response
 
 class Client extends Database
 {
@@ -77,13 +78,14 @@ class Client extends Database
             $last_id = $conn->lastInsertId();
 
             if ($last_id != null) {
-                echo "last_id: " . $last_id; // Debugging last_insert_id
+
+                // echo "last_id: " . $last_id; // Debugging last_insert_id
                 $fetchsql = "SELECT * FROM clients WHERE client_id=?";
                 $stmt = $conn->prepare($fetchsql);
 
                 if ($stmt->execute([$last_id])) {
                     $client = $stmt->fetch(PDO::FETCH_ASSOC);
-                    echo "Client successfully created with code: " . $client['client_code'];
+                    // echo "Client successfully created with code: " . $client['client_code'];
                     return $client; // Return single client record
                 } else {
                     echo "Error: Unable to fetch client data.";
@@ -102,10 +104,10 @@ class Client extends Database
     {
         try {
             $conn = $this->connect();
-    
+
             // Ensure that the previous query was an insert and the connection is valid
             $last_id = $conn->lastInsertId();
-            
+
             // Check if the last ID is valid
             if ($last_id) {
                 echo "Last saved ID was: " . $last_id;
@@ -122,7 +124,7 @@ class Client extends Database
             return null; // Return null in case of error
         }
     }
-    
+
 
     public function countLinkedContacts($client_id)
     {
@@ -191,6 +193,59 @@ class Client extends Database
             echo "Error: " . $e->getMessage();
         }
     }
-
-    // public function fetchContactInfo()
+    public function getAllClients()
+    {
+        $sql = "SELECT *
+        FROM clients
+        ORDER BY client_name ASC;";
+        try {
+            $stmt = $this->connect()->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Handle potential database errors
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+    public function getLinkedClients($contact_id)
+    {
+        if ($contact_id) {
+            $sql = "SELECT cl.client_name, cl.client_code
+            FROM clients cl
+            RIGHT JOIN client_contacts cc ON cl.client_id = cc.client_id
+            WHERE cc.contact_id = ? 
+            ORDER BY cl.client_name ASC;";
+            try {
+                $stmt = $this->connect()->prepare($sql);
+                $stmt->execute([$contact_id]); // Pass the client_id safely
+                return $stmt->fetchAll(PDO::FETCH_ASSOC); // Return the fetched data
+            } catch (PDOException $e) {
+                error_log("Error fetching linked contacts: " . $e->getMessage());
+                return []; // Return an empty array if an error occurs
+            }
+        } else {
+            return []; // Return an empty array if no client_id is provided
+        }
+    }
+    public function getAvailableClients($contact_id)
+    {
+        if ($contact_id) {
+            $sql = "SELECT cl.client_id, cl.client_name, cl.client_code
+                    FROM clients cl
+                    LEFT JOIN client_contacts cc 
+                    ON cl.client_id = cc.client_id AND cc.contact_id = ?
+                    WHERE cc.contact_id IS NULL;";
+            try {
+                $stmt = $this->connect()->prepare($sql);
+                $stmt->execute([$contact_id]); // Pass the client_id safely
+                return $stmt->fetchAll(PDO::FETCH_ASSOC); // Return the fetched data
+            } catch (PDOException $e) {
+                error_log("Error fetching linked contacts: " . $e->getMessage());
+                return []; // Return an empty array if an error occurs
+            }
+        } else {
+            return []; // Return an empty array if no client_id is provided
+        }
+    }
 }

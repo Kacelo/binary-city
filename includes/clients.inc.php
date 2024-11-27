@@ -1,7 +1,7 @@
 <?php
-session_start(); // Start the session to store/retrieve session data
+// session_start(); // Start the session to store/retrieve session data
 
-include "../config/database.php";
+require_once '../config/database.php';
 include "../models/clients.class.php";
 include "../controller/client-controller.php";
 

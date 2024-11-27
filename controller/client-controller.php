@@ -30,3 +30,39 @@ class ClientFetchController extends Client
         return $this->fetchClientsWithLinkedContacts();
     }
 }
+class ClientFetchAllController extends Client
+{
+    public function fetchAllClients()
+    {
+        return $this->getAllClients();
+    }
+}
+class FetchLinkedClientsController extends Client
+{
+    private $contact_id;
+
+    public function __construct($contact_id)
+    {
+        $this->contact_id = $contact_id;
+    }
+
+    public function fetchLinkedClients()
+    {
+        return $this->getLinkedClients($this->contact_id); 
+    }
+}
+
+class FetchAvailableClients extends Client
+{
+    private $contact_id;
+
+    public function __construct($contact_id)
+    {
+        $this->contact_id = $contact_id;
+    }
+
+    public function fetchAvailableClients()
+    {
+        return $this->getAvailableClients($this->contact_id);
+    }
+}

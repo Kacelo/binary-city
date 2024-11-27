@@ -8,10 +8,36 @@
 
     <title>Document</title>
 </head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="../../binary-city/index.php">Client Manager</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="../../binary-city/views/clients-table.php">Clients</a>
+            <a class="nav-item nav-link" href="../../binary-city/views/contacts-table.php">Contacts</a>
+        </div>
+    </div>
+</nav>
 
 <body>
     <!-- <?php ?> -->
-  
+
+    <H1>Welcome to the client Manager</H1>
+
+    <div>
+        <br>
+        <h2>Lets get started</h2>
+    </div>
+    <h3>Our Features</h3>
+
+    <ul>
+        <li>Create Client Records</li>
+        <li>Create Contact Records</li>
+        <li>Unlimitted contact and client linking</li>
+    </ul>
+
     <script>
         // const triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'));
         // console.log('List', triggerTabList)
