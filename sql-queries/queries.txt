@@ -1,0 +1,105 @@
+// table creation 
+
+CREATE TABLE clients (
+    client_id INT AUTO_INCREMENT PRIMARY KEY,
+    client_name VARCHAR(255) NOT NULL,
+    client_code VARCHAR (6) NOT NULL UNIQUE
+);
+
+CREATE TABLE contacts (
+    contact_id INT AUTO_INCREMENT PRIMARY KEY,
+    contact_name VARCHAR(255) NOT NULL,
+    contact_surname VARCHAR(255) NOT NULL,
+    contact_email VARCHAR(255) NOT NULL UNIQUE
+)
+// Our Join Table
+CREATE TABLE client_contacts (
+    client_id INT NOT NULL,
+    contact_id INT NOT NULL,
+    PRIMARY KEY (client_id, contact_id),
+    FOREIGN KEY (client_id) REFERENCES clients(client_id) ON DELETE CASCADE,
+    FOREIGN KEY (contact_id) REFERENCES contacts(contact_id) ON DELETE CASCADE
+);
+
+//insert data into client contacts table
+
+INSERT INTO client_contacts (client_id, contact_id)
+VALUES(1, 1);
+
+// script to get values from the 3 tables using inner joins and client id
+// get values that belong to a client
+SELECT cl.client_name, cl.client_code, cc.client_id,co.contact_name
+FROM contacts co
+INNER JOIN client_contacts cc ON co.contact_id = cc.contact_id
+INNER JOIN clients cl ON cc.client_id = cl.client_id
+WHERE cc.client_id = 2
+ORDER BY cl.client_name;
+// a query to get values from the 3 tables using inner joins with the contact ID as a REFERENCE
+//get values that belong to a contact
+SELECT cl.client_name, cl.client_code, cc.client_id,co.contact_name, co.contact_id
+FROM clients cl
+INNER JOIN client_contacts cc ON cl.client_id = cc.client_id
+INNER JOIN contacts co ON cc.contact_id = co.contact_id
+WHERE cc.contact_id = 2
+ORDER BY cl.client_name ASC;
+
+//query to get all clients with their counted contacts
+SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts
+FROM clients cl
+LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
+GROUP BY cl.client_id
+ORDER BY cl.client_name ASC;
+
+SELECT 
+    CONCAT(co.contact_name, " ", co.contact_surname) AS full_name,
+    co.contact_email,
+    COUNT(cc.client_id) AS linked_clients_count
+FROM 
+    contacts co
+LEFT JOIN 
+    client_contacts cc 
+ON 
+    co.contact_id = cc.contact_id
+GROUP BY 
+    co.contact_id
+ORDER BY 
+    full_name ASC;
+
+
+SELECT * contacts co
+RIGHT JOIN client_contacts cc ON co.contact_id = cc.contact_id
+WHERE cc.contact_id = 2
+ORDER BY co.contact_id, cc.client_id;
+
+//query to return full name and email of associated contacts
+SELECT CONCAT(co.contact_name, " ", co.contact_surname) AS full_name, co.contact_email
+FROM contacts co
+RIGHT JOIN client_contacts cc ON co.contact_id = cc.contact_id
+WHERE cc.client_id = 1
+ORDER BY full_name ASC;
+
+//query to return the names and codes of a contact's linked clients 
+SELECT cl.client_name, cl.client_code
+FROM clients cl
+RIGHT JOIN client_contacts cc ON cl.client_id = cc.client_id
+WHERE cc.contact_id = 2 
+ORDER BY cl.client_name ASC;
+
+
+// fetch contacts that have not been added by the client 
+SELECT c.contact_id, c.contact_name, c.contact_surname, c.contact_email
+FROM contacts c
+LEFT JOIN client_contacts cc 
+ON c.contact_id = cc.contact_id AND cc.client_id = ?
+WHERE cc.client_id IS NULL
+ORDER BY c.contact_name ASC;
+
+// query to fetch clients that are still available to add 
+SELECT cl.client_id, cl.client_name
+FROM clients cl
+LEFT JOIN client_contacts cc 
+ON cl.client_id = cc.client_id AND cc.contact_id = ?
+WHERE cc.contact_id IS NULL
+ORDER BY cl.client_name ASC;
+
+
