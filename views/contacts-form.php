@@ -1,8 +1,6 @@
 <?php
 include 'header.php';
 require_once '../includes/clients.inc.php';
-
-// session_start();
 ?>
 <div class="container-md mt-5">
     <h1>Create a new contact</h1>
@@ -41,6 +39,7 @@ require_once '../includes/clients.inc.php';
                                     <button type="button" class="btn btn-primary" data-toggle="modal" id="save_link">Save changes</button>
 
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -50,12 +49,11 @@ require_once '../includes/clients.inc.php';
             <form action="" method="post" id="contact_create">
                 <div class="mb-3">
                     <label for="contact_name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="contact_name" name="contact_name" placeholder="Enter contact name" required>
+                    <input type="text" class="form-control" id="contact_name" name="contact_name" placeholder="Enter contact name">
                 </div>
                 <div class="mb-3">
                     <label for="contact_surname" class="form-label">Surname</label>
                     <input type="text" class="form-control" id="contact_surname" name="contact_surname" placeholder="Enter contact surname">
-                    <span class="error"><?php echo $emailErr;?></span>
                 </div>
                 <div class="mb-3">
                     <label for="contact_email" class="form-label">Email</label>
@@ -66,6 +64,9 @@ require_once '../includes/clients.inc.php';
 
                 <!-- <button type="submit" class="btn btn-success" name="" style="display: none;" id="modalTriggerButton">Link to a contact</button> -->
             </form>
+            <div id="error-container" class="error-container" style="color: red; font-size:14px; margin: 5px 0;"></div>
+
+
         </div>
 
         <div id="menu1" class="tab-pane fade">
@@ -77,13 +78,14 @@ require_once '../includes/clients.inc.php';
 
         </div>
     </div>
+
 </div>
 
 <script>
     document.getElementById('contact_create').addEventListener('submit', async function(e) {
         e.preventDefault(); // Prevent the default form submission
         const formData = new FormData(this); // Collect form data
-        console.log("this:",formData)
+        console.log("this:", formData)
 
         try {
             // AJAX
@@ -93,9 +95,9 @@ require_once '../includes/clients.inc.php';
             });
 
             const result = await response.json(); // Parse JSON response
+            console.log("Result", result)
 
-            if (result.data.status === 'success') {
-                console.log("Result", result)
+            if (result.status === 'success') {
 
                 const contactEmailInput = document.getElementById('contact_email');
                 const contactNameInput = document.getElementById('contact_name');
@@ -103,7 +105,8 @@ require_once '../includes/clients.inc.php';
 
                 const saveClientBtn = document.getElementById('save_client');
                 const linkClientBtn = document.getElementById('modalTriggerButton');
-
+                const errorContainer = document.getElementById("error-container");
+                errorContainer.innerHTML = "";
                 if (contactEmailInput && contactNameInput && contactSurnameInput) {
                     contactEmailInput.value = result.data.data.contact_email;
                     contactNameInput.value = result.data.data.contact_name;
@@ -120,6 +123,8 @@ require_once '../includes/clients.inc.php';
                     console.log("data res", contactIdInput, result.data.data.contact_id)
                     contactIdInput.value = result.data.data.contact_id;
                 }
+            } else if (result.errors) {
+                displayErrors(result.errors)
             } else {
                 console.error('Failed response:', result);
                 alert(result.data.message || 'Submission failed.');
@@ -185,7 +190,7 @@ require_once '../includes/clients.inc.php';
         try {
             console.log("before:")
 
-            const response = await fetch('../includes/contact-to-client.inc.php', {
+            const response = await fetch('../includes/link-contact-to-client.inc.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -240,33 +245,49 @@ require_once '../includes/clients.inc.php';
         console.log("IDS RECIEVED", client_id, contact_id);
         alert('Are you sure want to delete this client link ?');
 
-            try {
-                const response = await fetch('../includes/unlink-contact-client.inc.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        client_id: client_id,
-                        contact_id: contact_id
-                    })
-                });
+        try {
+            const response = await fetch('../includes/unlink-contact-client.inc.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    client_id: client_id,
+                    contact_id: contact_id
+                })
+            });
 
-                console.log("inside")
-                const result = await response.json();
-                console.log("inside", result)
+            console.log("inside")
+            const result = await response.json();
+            console.log("inside", result)
 
-                if (result.deleted ===  true) {
-                    alert('Link has been deleted');
-                } else {
-                    console.error("Server Error:", result.message);
-                }
-            } catch (error) {
-                console.error("An unexpected error occurred:", error);
-
+            if (result.deleted === true) {
+                alert('Link has been deleted');
+            } else {
+                console.error("Server Error:", result.message);
             }
-    
+        } catch (error) {
+            console.error("An unexpected error occurred:", error);
+
+        }
+
     }
+
+    function displayErrors(errors) {
+        if (Object.keys(errors).length > 0) {
+            const errorContainer = document.getElementById("error-container");
+            errorContainer.innerHTML = "";
+
+            // Iterate through the errors object
+            for (const [field, message] of Object.entries(errors)) {
+                const errorRow = document.createElement("div");
+                errorRow.innerHTML = `<p>${message}</p>`;
+                errorRow.className = "form-error";
+                errorContainer.appendChild(errorRow);
+            }
+        }
+    }
+
 
     function renderClientsTable(clients, contactId) {
         const tableContainer = document.getElementById("contacts_table_container");

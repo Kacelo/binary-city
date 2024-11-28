@@ -22,9 +22,6 @@ try {
 
     $createContactClientlink->linkClientoContact();
     echo json_encode(['status' => 'success', 'data' => $client_id]);
-
-    // header("Location: ../views/clients-form.php?status=contact-linked#menu1");
-    // exit();
 } catch (Exception $e) {
     echo "Hellloooo";
     error_log("Error: " . $e->getMessage());

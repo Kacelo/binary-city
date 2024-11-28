@@ -1,5 +1,4 @@
 <?php
-// session_start(); // Start the session to store/retrieve session data
 
 require_once '../config/database.php';
 include "../models/clients.class.php";

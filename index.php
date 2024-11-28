@@ -22,15 +22,11 @@
 </nav>
 
 <body>
-    <!-- <?php ?> -->
-
     <H1>Welcome to the client Manager</H1>
 
-    <div>
-        <br>
-        <h2>Lets get started</h2>
-    </div>
-    <h3>Our Features</h3>
+    
+    <h2>Our Features</h2>
+    <br>
 
     <ul>
         <li>Create Client Records</li>
@@ -38,23 +34,16 @@
         <li>Unlimitted contact and client linking</li>
     </ul>
 
+    <div>
+        <br>
+        <h3>Lets get started</h3>
+        <div>
+        <a class="btn btn-primary" href="../../binary-city/views/clients-table.php" role="button">Add a client</a>
+        <a class="btn btn-secondary" href="../../binary-city/views/contacts-table.php" role="button">Add a contact</a>
+        </div>
+    </div>
+
     <script>
-        // const triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'));
-        // console.log('List', triggerTabList)
-        // triggerTabList.forEach((triggerEl) => {
-        //     const tabTrigger = new Tab(triggerEl);
-
-        //     triggerEl.addEventListener('click', (event) => {
-        //         event.preventDefault();
-        //         tabTrigger.show();
-        //     });
-        // });
-        // const triggerEl = document.querySelector('#myTab a[href="#profile"]');
-        // Tab.getInstance(triggerEl).show(); // Select tab by name
-        // const triggerEl2 = document.querySelector('#myTab a[href="#messages"]');
-
-        // const triggerFirstTabEl = document.querySelector('#myTab li:first-child a');
-        // Tab.getInstance(triggerFirstTabEl).show(); // Select first tab
     </script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

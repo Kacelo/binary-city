@@ -1,61 +1,35 @@
 <?php
-session_start(); // Start the session to store/retrieve session data
-
 require_once '../config/database.php';
 include "../models/clients.class.php";
 include "../controller/client-controller.php";
 header('Content-Type: application/json');
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $client_name = $_POST["client_name"];
-    if ($client_name) {
-        try {
-            //code...
-            $createClient = new ClientController($client_name);
-            $newClient = $createClient->registerClient();
-            echo json_encode(['status' => 'success', 'data' => $newClient]);
-            exit();
-        } catch (Exception $e) {
-            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+
+
+try {
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+        $client_name = trim($_POST["client_name"] ?? '');
+        $errors = [];
+
+        if (empty($client_name)) {
+            $errors["client_name"] = "Client name is required.";
+        }
+        if (!empty($errors)) {
+            // Return errors in the response
+            echo json_encode(['status' => 'error', 'errors' => $errors]);
             exit();
         }
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Invalid input']);
+        $createClient = new ClientController($client_name);
+        $newClient = $createClient->registerClient();
+        echo json_encode(['status' => 'success', 'data' => $newClient]);
         exit();
+    } else {
+        throw new Exception("Invalid request method.");
     }
+} catch (Exception $e) {
+    // Handle server-side errors gracefully
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    exit();
 }
-
-
-
-// if (isset($_POST["submit"])) {
-//     // grabbing data from the frontend 
-//     $client_name = $_POST["client_name"];
-
-//     // Instatiate controller class
-
-
-//     $createClient = new ClientController($client_name);
-
-
-//     // error handling done here
-//     $newClient = $createClient->registerClient();
-//     if ($newClient) {
-//         // Get the client name and code
-//         print_r($newClient);
-//         $clientName = $newClient['client_name'];
-//         $clientCode = $newClient['client_code'];
-//         $clientId = $newClient['client_id'];
-
-//         // Store client information in session
-//         $_SESSION['client_name'] = $clientName;
-//         $_SESSION['client_code'] = $clientCode;
-//         $_SESSION['client_id'] = $clientId;
-//         // Redirect to the form page with status success
-//         header("Location: ../views/clients-form.php?status=client-saved");
-//         exit;
-//     } else {
-//         // If there was an error, redirect with an error message
-//         header("Location: ../views/clients-form.php?status=error");
-//         exit;
-//     }
-// }
