@@ -78,6 +78,13 @@ RIGHT JOIN client_contacts cc ON co.contact_id = cc.contact_id
 WHERE cc.client_id = 1
 ORDER BY full_name ASC;
 
+SELECT CONCAT(co.contact_name, ' ', co.contact_surname) AS full_name,co.contact_name,co.contact_surname, co.contact_email,
+        COUNT(cc.client_id) AS linked_clients
+        FROM contacts co
+        LEFT JOIN client_contacts cc ON co.contact_id = cc.contact_id
+        GROUP BY co.contact_id
+        ORDER BY full_name ASC;
+        
 //query to return the names and codes of a contact's linked clients 
 SELECT cl.client_name, cl.client_code
 FROM clients cl

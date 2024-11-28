@@ -8,14 +8,14 @@ try {
     // Decode JSON payload from the request body
     $data = json_decode(file_get_contents('php://input'), true);
 
-    $client_id = $data["client_id"] ?? null;
+    $contact_id = $data["contact_id"] ?? null;
 
-    if (empty($client_id)) {
-        throw new Exception("Client ID is required.");
+    if (empty($contact_id)) {
+        throw new Exception("Contact ID is required.");
     }
 
     // Create the controller and fetch the linked contacts
-    $fecthLinkkedClientsController = new FetchLinkedClientsController($client_id);
+    $fecthLinkkedClientsController = new FetchLinkedClientsController($contact_id);
     $linkedClients = $fecthLinkkedClientsController->fetchlinkedClients();
 
     // Return the response as JSON
@@ -26,7 +26,6 @@ try {
     ]);
     exit();
 } catch (Exception $e) {
-    // Log error and send JSON response
     error_log("Error: " . $e->getMessage());
     header('Content-Type: application/json');
     echo json_encode([

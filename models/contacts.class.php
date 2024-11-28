@@ -85,7 +85,7 @@ class Contact extends Database
     public function getLinkedContacts($client_id)
     {
         if ($client_id) {
-            $sql = "SELECT CONCAT(co.contact_name, ' ', co.contact_surname) AS full_name, co.contact_email
+            $sql = "SELECT CONCAT(co.contact_name, ' ', co.contact_surname) AS full_name, co.contact_email, co.contact_id
                     FROM contacts co
                     RIGHT JOIN client_contacts cc ON co.contact_id = cc.contact_id
                     WHERE cc.client_id = ?
@@ -125,12 +125,12 @@ class Contact extends Database
 
     public function fetchContactsWithNoOfLinkedClients()
     {
-        $sql = "SELECT CONCAT(co.contact_name, '', co.contact_surname) AS full_name, co.contact_email,
+        $sql = "SELECT CONCAT(co.contact_name, ' ', co.contact_surname) AS full_name,co.contact_name,co.contact_surname, co.contact_email,
         COUNT(cc.client_id) AS linked_clients
         FROM contacts co
         LEFT JOIN client_contacts cc ON co.contact_id = cc.contact_id
         GROUP BY co.contact_id
-        ORDER BY full_name ASC";
+        ORDER BY full_name ASC;";
         try {
             $stmt = $this->connect()->prepare($sql);
             $stmt->execute();

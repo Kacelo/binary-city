@@ -1,7 +1,6 @@
 <?php
 include 'header.php';
 require_once '../includes/clients.inc.php';
-// require_once '../includes/contacts-create.inc.php';
 
 // session_start();
 ?>
@@ -55,14 +54,15 @@ require_once '../includes/clients.inc.php';
                 </div>
                 <div class="mb-3">
                     <label for="contact_surname" class="form-label">Surname</label>
-                    <input type="text" class="form-control" id="contact_surname" name="contact_surname" placeholder="Enter contact name" required>
+                    <input type="text" class="form-control" id="contact_surname" name="contact_surname" placeholder="Enter contact surname">
+                    <span class="error"><?php echo $emailErr;?></span>
                 </div>
                 <div class="mb-3">
                     <label for="contact_email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="contact_email" name="contact_email" placeholder="Enter contact email" required>
+                    <input type="text" class="form-control" id="contact_email" name="contact_email" placeholder="Enter contact email">
                 </div>
                 <button type="submit" class="btn btn-primary" name="submit" id="save_client">Save Contact</button>
-                <button type="button" class="btn btn-success" name="submit" style="display: none;" data-toggle="modal" data-target="#exampleModalCenter" id="modalTriggerButton">Link to a contact</button>
+                <button type="button" class="btn btn-success" name="submit" style="display: none;" data-toggle="modal" data-target="#exampleModalCenter" id="modalTriggerButton">Link to a client</button>
 
                 <!-- <button type="submit" class="btn btn-success" name="" style="display: none;" id="modalTriggerButton">Link to a contact</button> -->
             </form>
@@ -71,7 +71,7 @@ require_once '../includes/clients.inc.php';
         <div id="menu1" class="tab-pane fade">
             <div id="contacts_table_container">
                 <table class="table">
-                <p>No Contact(s) found.</p>
+                    <p>No client(s) found.</p>
                 </table>
             </div>
 
@@ -82,13 +82,9 @@ require_once '../includes/clients.inc.php';
 <script>
     document.getElementById('contact_create').addEventListener('submit', async function(e) {
         e.preventDefault(); // Prevent the default form submission
-
         const formData = new FormData(this); // Collect form data
+        console.log("this:",formData)
 
-        // Log FormData contents
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
         try {
             // AJAX
             const response = await fetch('../includes/create-contacts.inc.php', {
@@ -98,8 +94,8 @@ require_once '../includes/clients.inc.php';
 
             const result = await response.json(); // Parse JSON response
 
-            if (result.status === 'success') {
-                console.log("Result",result)
+            if (result.data.status === 'success') {
+                console.log("Result", result)
 
                 const contactEmailInput = document.getElementById('contact_email');
                 const contactNameInput = document.getElementById('contact_name');
@@ -107,14 +103,11 @@ require_once '../includes/clients.inc.php';
 
                 const saveClientBtn = document.getElementById('save_client');
                 const linkClientBtn = document.getElementById('modalTriggerButton');
-                console.log("ress",result.data.contact_id)
-                console.log(contactEmailInput, contactNameInput, contactSurnameInput);
 
                 if (contactEmailInput && contactNameInput && contactSurnameInput) {
                     contactEmailInput.value = result.data.data.contact_email;
                     contactNameInput.value = result.data.data.contact_name;
-                    contactSurnameInput.value =  result.data.data.contact_surname
-                    console.log("ress", contactSurnameInput )
+                    contactSurnameInput.value = result.data.data.contact_surname
 
                     linkClientBtn.style = "display: visible";
                     saveClientBtn.style = "display:none";
@@ -129,11 +122,11 @@ require_once '../includes/clients.inc.php';
                 }
             } else {
                 console.error('Failed response:', result);
-                alert(result.message || 'Submission failed.');
+                alert(result.data.message || 'Submission failed.');
             }
         } catch (error) {
             console.error('An error occurred:', error);
-            alert('An unexpected error occurred. Please try again.');
+            // alert('An unexpected error occurred. Please try again.');
         }
     });
     // document.addEventListener('DOMContentLoaded', () => {
@@ -180,7 +173,6 @@ require_once '../includes/clients.inc.php';
     // });
     document.getElementById("save_link").addEventListener('click', async function() {
         const contactId = document.getElementById("contact_id_input");
-        // console.log(contactId.value)
         const selectedClients = Array.from(document.querySelectorAll('#contactsTable input[type="checkbox"]:checked'))
             .map(checkbox => checkbox.value);
         console.log(selectedClients)
@@ -188,6 +180,8 @@ require_once '../includes/clients.inc.php';
             alert('No contacts selected.');
             return;
         }
+        console.log("Contact Id:", contactId.value, 'selected clients:', selectedClients)
+
         try {
             console.log("before:")
 
@@ -202,12 +196,9 @@ require_once '../includes/clients.inc.php';
                 }),
             });
             console.log("response:", response.status)
-
-            // const result = await response.json();
-            // console.log(result);
             if (response.status === 200) {
-                alert('Contacts linked successfully!');
-                // $('#exampleModalCenter').modal('hide');
+                alert('Clients linked successfully!');
+                $('#exampleModalCenter').modal('hide');
             } else {
                 alert(result.message || 'Failed to link contacts.');
             }
@@ -216,7 +207,6 @@ require_once '../includes/clients.inc.php';
         }
     })
     document.getElementById("contacts_tab").addEventListener("click", async function() {
-        console.log("I have been clicked")
         const contactId = document.getElementById("contact_id_input");
         console.log(contactId)
         if (contactId.value !== 0) {
@@ -230,38 +220,56 @@ require_once '../includes/clients.inc.php';
                         contact_id: contactId.value,
                     }),
                 })
-                console.log("response:", contactId.value)
-
-                // console.log(response)
-                // if (!response.ok) {
-                //     console.error("Error fetching contacts:", response.statusText);
-                //     alert("Failed to fetch contacts. Please try again.");
-                //     return;
-                // }
                 const result = await response.json();
                 console.log("Response from server:", result);
 
                 if (result.status === "success") {
-                    console.log("Contacts:", result.linkedClients);
-                    // You can now populate the modal or a table with the contacts
-                    const contacts = result.linkedClients;
-                    renderContactsTable(contacts); // Example: Update a table or modal with the fetched data
-                    // populateContactsTable(result.data);
+                    const clients = result.linkedClients;
+                    renderClientsTable(clients, contactId);
                 } else {
                     console.error("Server Error:", result.message);
-                    // alert(result.message || "An error occurred while fetching contacts.");
                 }
             } catch (error) {
                 console.error("An unexpected error occurred:", error);
-                // alert("An unexpected error occurred. Please try again.");
             }
         }
 
     })
 
-    function renderContactsTable(clients) {
-        const tableContainer = document.getElementById("contacts_table_container");
+    async function ConfirmDelete(client_id, contact_id) {
+        console.log("IDS RECIEVED", client_id, contact_id);
+        alert('Are you sure want to delete this client link ?');
 
+            try {
+                const response = await fetch('../includes/unlink-contact-client.inc.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        client_id: client_id,
+                        contact_id: contact_id
+                    })
+                });
+
+                console.log("inside")
+                const result = await response.json();
+                console.log("inside", result)
+
+                if (result.deleted ===  true) {
+                    alert('Link has been deleted');
+                } else {
+                    console.error("Server Error:", result.message);
+                }
+            } catch (error) {
+                console.error("An unexpected error occurred:", error);
+
+            }
+    
+    }
+
+    function renderClientsTable(clients, contactId) {
+        const tableContainer = document.getElementById("contacts_table_container");
         // Clear previous content
         tableContainer.innerHTML = "";
 
@@ -274,7 +282,7 @@ require_once '../includes/clients.inc.php';
             const thead = document.createElement("thead");
             thead.innerHTML = `
             <tr>
-                <th>Cleint Name</th>
+                <th>Client Name</th>
                 <th>Client Code</th>
                 <th></th>
             </tr>
@@ -283,13 +291,12 @@ require_once '../includes/clients.inc.php';
 
             // Create table body
             const tbody = document.createElement("tbody");
-
             clients.forEach(client => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                 <td>${client.client_name}</td>
                 <td>${client.client_code}</td>
-                <td><a href="#" class="btn btn-primary btn-sm">Unlink contact</a></td>
+                <td><a onclick="return ConfirmDelete(${client.client_id},${contactId.value});" class="" id="unlinkClient">Unlink Client</a></td>
             `;
                 tbody.appendChild(row);
             });
@@ -300,21 +307,6 @@ require_once '../includes/clients.inc.php';
             tableContainer.innerHTML = "<p>No clients found.</p>";
         }
     }
-    //     function showUser(client_id) {
-    //   if (str == "") {
-    //     document.getElementById("txtHint").innerHTML = "";
-    //     return;
-    //   } else {
-    //     var xmlhttp = new XMLHttpRequest();
-    //     xmlhttp.onreadystatechange = function() {
-    //       if (this.readyState == 4 && this.status == 200) {
-    //         document.getElementById("txtHint").innerHTML = this.responseText;
-    //       }
-    //     };
-    //     xmlhttp.open("GET","../includes/fetch-linked-contacts.inc.php?q="+str,true);
-    //     xmlhttp.send();
-    //   }
-    // }
 </script>
 
 <?php include 'footer.php'; ?>

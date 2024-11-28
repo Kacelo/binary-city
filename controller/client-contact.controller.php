@@ -47,13 +47,17 @@ class ContactClientDeleteController extends ClientContact
 class ClientContactDeleteController extends ClientContact
 {   
     private $client_id;
-    public function __construct($client_id)
+    private $contact_id;
+
+    public function __construct($client_id, $contact_id)
     {
         $this->client_id = $client_id;
+        $this->contact_id = $contact_id;
+
     }
 
     public function unlinkClientContact()
     {
-        return $this->deleteClientContact($this->client_id);
+        return $this->deleteClientContact($this->client_id, $this->contact_id);
     }
 }

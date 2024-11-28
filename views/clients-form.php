@@ -50,7 +50,7 @@ require_once '../includes/clients.inc.php';
             <!-- Default Form -->
             <form action="" method="post" id="client_create">
                 <div class="mb-3">
-                    <label for="client_name" class="form-label">Client Name</label>
+                    <label for="client_name" class="form-label">Name</label>
                     <input type="text" class="form-control" id="client_name" name="client_name" placeholder="Enter client name" required>
                 </div>
                 <div class="mb-3">
@@ -202,7 +202,7 @@ require_once '../includes/clients.inc.php';
             // console.log(result);
             if (response.status === 200) {
                 alert('Contacts linked successfully!');
-                // $('#exampleModalCenter').modal('hide');
+                $('#exampleModalCenter').modal('hide');
             } else {
                 alert(result.message || 'Failed to link contacts.');
             }
@@ -239,7 +239,7 @@ require_once '../includes/clients.inc.php';
                     console.log("Contacts:", result.linkedContacts);
                     // You can now populate the modal or a table with the contacts
                     const contacts = result.linkedContacts;
-                    renderContactsTable(contacts); // Example: Update a table or modal with the fetched data
+                    renderContactsTable(contacts, clientId); // Example: Update a table or modal with the fetched data
                     // populateContactsTable(result.data);
                 } else {
                     console.error("Server Error:", result.message);
@@ -253,11 +253,40 @@ require_once '../includes/clients.inc.php';
 
     })
 
-    function deleteContact(client_id) {
+    async function ConfirmDelete(client_id, contact_id) {
+        console.log("IDS RECIEVED", client_id, contact_id);
+        alert('Are you sure want to delete this client link ?');
 
+            try {
+                const response = await fetch('../includes/unlink-contact-client.inc.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        client_id: client_id,
+                        contact_id: contact_id
+                    })
+                });
+
+                console.log("inside")
+                const result = await response.json();
+                console.log("inside", result)
+
+                if (result.deleted ===  true) {
+                    alert('Link has been deleted');
+                } else {
+                    console.error("Server Error:", result.message);
+                }
+            } catch (error) {
+                console.error("An unexpected error occurred:", error);
+
+            }
+    
     }
 
-    function renderContactsTable(contacts) {
+
+    function renderContactsTable(contacts, clientId) {
         const tableContainer = document.getElementById("contacts_table_container");
 
         // Clear previous content
@@ -274,7 +303,7 @@ require_once '../includes/clients.inc.php';
             <tr>
                 <th>Full Name</th>
                 <th>Email</th>
-                <th>Action</th>
+                <th></th>
             </tr>
         `;
             table.appendChild(thead);
@@ -287,7 +316,7 @@ require_once '../includes/clients.inc.php';
                 row.innerHTML = `
                 <td>${contact.full_name}</td>
                 <td>${contact.contact_email}</td>
-                <td><a href="#" class="btn btn-primary btn-sm">Click Me</a></td>
+                <td><a onclick="return ConfirmDelete(${clientId.value},${contact.contact_id});" class="" id="unlinkClient">Unlink Contact</a></td>
             `;
                 tbody.appendChild(row);
             });
@@ -298,21 +327,6 @@ require_once '../includes/clients.inc.php';
             tableContainer.innerHTML = "<p>No contacts found.</p>";
         }
     }
-    //     function showUser(client_id) {
-    //   if (str == "") {
-    //     document.getElementById("txtHint").innerHTML = "";
-    //     return;
-    //   } else {
-    //     var xmlhttp = new XMLHttpRequest();
-    //     xmlhttp.onreadystatechange = function() {
-    //       if (this.readyState == 4 && this.status == 200) {
-    //         document.getElementById("txtHint").innerHTML = this.responseText;
-    //       }
-    //     };
-    //     xmlhttp.open("GET","../includes/fetch-linked-contacts.inc.php?q="+str,true);
-    //     xmlhttp.send();
-    //   }
-    // }
 </script>
 
 <?php include 'footer.php'; ?>

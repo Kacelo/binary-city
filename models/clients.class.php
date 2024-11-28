@@ -211,7 +211,7 @@ class Client extends Database
     public function getLinkedClients($contact_id)
     {
         if ($contact_id) {
-            $sql = "SELECT cl.client_name, cl.client_code
+            $sql = "SELECT cl.client_name, cl.client_code, cl.client_id
             FROM clients cl
             RIGHT JOIN client_contacts cc ON cl.client_id = cc.client_id
             WHERE cc.contact_id = ? 

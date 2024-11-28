@@ -10,7 +10,8 @@ require_once '../includes/fetch-contacts.inc.php';
         <?php if (!empty($contacts)) : ?>
             <thead>
                 <tr>
-                    <th scope="col">Full Name</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
                     <th scope="col">Email</th>
                     <th scope="col">No. of linked contacts</th>
                 </tr>
@@ -18,7 +19,8 @@ require_once '../includes/fetch-contacts.inc.php';
             <tbody>
                 <?php foreach ($contacts as $contact) : ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($contact['full_name']); ?></td>
+                        <td><?php echo htmlspecialchars($contact['contact_name']); ?></td>
+                        <td><?php echo htmlspecialchars($contact['contact_surname']); ?></td>
                         <td><?php echo htmlspecialchars($contact['contact_email']); ?></td>
                         <td style="text-align: center;"><?php echo htmlspecialchars($contact['linked_clients']); ?></td>
                     </tr>

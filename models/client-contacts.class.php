@@ -43,12 +43,12 @@ class ClientContact extends Database
         }
     }
 
-    public function deleteClientContact($client_id)
+    public function deleteClientContact($client_id, $contact_id)
     {
-        $sql = "DELETE FROM client_contacts WHERE client_id=?";
+        $sql = "DELETE FROM client_contacts WHERE client_id=? AND contact_id=?";
         try {
             $stmt = $this->connect()->prepare($sql);
-            $stmt->execute([$client_id]);
+            $stmt->execute([$client_id, $contact_id]);
             return $stmt->rowCount() > 0; // Returns true if a row was deleted
         } catch (PDOException $e) {
             // Log the error for debugging purposes
