@@ -20,14 +20,6 @@ class Contact extends Database
 
     public function createContact($contact_name, $contact_surname, $contact_email)
     {
-        // Check if contact email already exists
-        if ($this->checkIfEmailExists($contact_email)) {
-            return [
-                'status' => 'error',
-                'message' => 'Error: Email already exists!',
-            ];
-        }
-
         $sql = "INSERT INTO contacts (contact_name, contact_surname, contact_email) VALUES (?, ?, ?)";
 
         try {

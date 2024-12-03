@@ -127,11 +127,11 @@ require_once '../includes/clients.inc.php';
                 displayErrors(result.errors)
             } else {
                 console.error('Failed response:', result);
-                alert(result.data.message || 'Submission failed.');
+                alert(result.message || 'Submission failed.');
             }
         } catch (error) {
             console.error('An error occurred:', error);
-            // alert('An unexpected error occurred. Please try again.');
+            alert('An unexpected error occurred. Please try again.');
         }
     });
     // document.addEventListener('DOMContentLoaded', () => {

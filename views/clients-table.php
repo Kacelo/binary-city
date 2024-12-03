@@ -28,7 +28,7 @@ require_once '../includes/clients.inc.php';
         <?php else : ?>
             <tbody>
                 <tr>
-                    <td colspan="2">No clients found.</td>
+                    <td colspan="2">No client(s) found.</td>
                 </tr>
             </tbody>
         <?php endif; ?>

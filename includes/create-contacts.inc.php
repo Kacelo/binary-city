@@ -36,11 +36,16 @@ try {
 
         // Proceed if no validation errors
         $createContact = new ContactController($contact_name, $contact_surname, $contact_email);
-        $newContact = $createContact->registerContact();
+        $validateEmail = $createContact->checkIfEmailExists($contact_email);
+        if ($validateEmail) {
+            echo json_encode(['status' => 'error', 'message' => 'Error: Email already exists!',]);
+        } else {
+            $newContact = $createContact->registerContact();
 
-        echo json_encode(['status' => 'success', 'data' => $newContact]);
+            echo json_encode(['status' => 'success', 'data' => $newContact]);
 
-        exit();
+            exit();
+        }
     } else {
         throw new Exception("Invalid request method.");
     }
