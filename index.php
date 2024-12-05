@@ -8,79 +8,42 @@
 
     <title>Document</title>
 </head>
-
-<body>
-    <!-- <?php ?> -->
-    <h1>Sign Up</h1>
-    <ul class="nav nav-tabs">
-        <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#home">General</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1">Contacts</a></li>
-    </ul>
-
-    <div class="tab-content">
-        <div id="home" class="tab-pane active">
-            <form action="includes/clients.inc.php" method="post">
-                <div class="mb-3">
-                    <label for="client_name" class="form-label">Client Name</label>
-                    <input type="text" class="form-control" id="client_name" aria-describedby="emailHelp" name="client_name">
-                </div>
-                <!-- <div class="mb-3">
-                    <label for="disabledTextInput" class="form-label">Client Code</label>
-                    <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
-                </div> -->
-                <button type="submit" class="btn btn-primary" name="submit">Save</button>
-                <!-- <button type="submit" class="btn btn-success">Link a contact</button> -->
-    
-        </div>
-        <div id="menu1" class="tab-pane fade">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td colspan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
-                </tbody>
-            </table>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="../../binary-city/index.php">Client Manager</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="../../binary-city/views/clients-table.php">Clients</a>
+            <a class="nav-item nav-link" href="../../binary-city/views/contacts-table.php">Contacts</a>
         </div>
     </div>
+</nav>
+
+<body>
+    <H1>Welcome to the client Manager</H1>
+
+    
+    <h2>Our Features</h2>
+    <br>
+
+    <ul>
+        <li>Create Client Records</li>
+        <li>Create Contact Records</li>
+        <li>Unlimitted contact and client linking</li>
+    </ul>
+
+    <div>
+        <br>
+        <h3>Lets get started</h3>
+        <div>
+        <a class="btn btn-primary" href="../../binary-city/views/clients-table.php" role="button">Add a client</a>
+        <a class="btn btn-secondary" href="../../binary-city/views/contacts-table.php" role="button">Add a contact</a>
+        </div>
+    </div>
+
     <script>
-        // const triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'));
-        // console.log('List', triggerTabList)
-        // triggerTabList.forEach((triggerEl) => {
-        //     const tabTrigger = new Tab(triggerEl);
-
-        //     triggerEl.addEventListener('click', (event) => {
-        //         event.preventDefault();
-        //         tabTrigger.show();
-        //     });
-        // });
-        // const triggerEl = document.querySelector('#myTab a[href="#profile"]');
-        // Tab.getInstance(triggerEl).show(); // Select tab by name
-        // const triggerEl2 = document.querySelector('#myTab a[href="#messages"]');
-
-        // const triggerFirstTabEl = document.querySelector('#myTab li:first-child a');
-        // Tab.getInstance(triggerFirstTabEl).show(); // Select first tab
     </script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

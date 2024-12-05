@@ -16,6 +16,50 @@ class ContactController extends Contact
 
     public function registerContact()
     {
-        $this->createContact($this->contact_name, $this->contact_surname, $this->contact_email);
+        return $this->createContact($this->contact_name, $this->contact_surname, $this->contact_email);
+    }
+}
+
+class ContactFetchAllController extends Contact
+{
+    public function fetchAllContacts()
+    {
+        return $this->getAllContacts();
+    }
+}
+
+class FetchLinkedContactsController extends Contact
+{
+    private $client_id;
+
+    public function __construct($client_id)
+    {
+        $this->client_id = $client_id;
+    }
+
+    public function fetchLinkedContacts()
+    {
+        return $this->getLinkedContacts($this->client_id);
+    }
+}
+
+class FetchAvailableContacts extends Contact
+{
+    private $client_id;
+
+    public function __construct($client_id)
+    {
+        $this->client_id = $client_id;
+    }
+
+    public function fetchAvailableContacts()
+    {
+        return $this->getAvailableContacts($this->client_id);
+    }
+}
+
+class FetchContactsController extends Contact {
+    public function fetchContacts(){
+        return $this->fetchContactsWithNoOfLinkedClients();
     }
 }
