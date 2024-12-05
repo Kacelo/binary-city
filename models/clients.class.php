@@ -18,23 +18,91 @@ class Client extends Database
         if ($nameCount == 1) {
             // If only one word, take the first 3 letters of the single word
 
-            if (strlen($clientName) <= 2) {
-                $lessThan2Charaters = substr($nameArray[0], 0, 2);
-                $clientCode = $lessThan2Charaters . chr(rand(65, 90));
+            if (strlen($clientName) == 2) {
+                $lessThan2Characters = substr($nameArray[0], 0, 2);
+                $thirdLetter = 'A';
+                $numericPart = 2;
+                while (true) {
+                    if ($thirdLetter > 'B' && $numericPart > 2) {
+                        // Reset the letter and increment the numeric part
+                        $thirdLetter = 'A';
+                        $numericPart++;
+                    }
+                    $uniqueAplhanumericCode = $lessThan2Characters . $thirdLetter . $numericPart;
+
+                    // check if the code exists in the database
+                    $sql = "SELECT COUNT(*) FROM clients WHERE client_code =?";
+                    $stmt = $this->connect()->prepare($sql);
+                    $stmt->execute([$uniqueAplhanumericCode]);
+
+                    $count = $stmt->fetchColumn();
+                    if ($count == 0) {
+                        // count == means the code is unique and can be returned as the new unique code
+                        return strtoupper($uniqueAplhanumericCode);
+                    }
+                    // if count == 0 is not true, this means we increment the number and try again. 
+                    // $numericPart++;
+                    $thirdLetter = chr(ord($thirdLetter) + 1);
+                }
+                // $clientCode = $lessThan2Charaters . chr(rand(65, 90));
             } elseif (strlen($clientName) > 2) {
-                $clientCode = substr($nameArray[0], 0, 3);
+                $clientCode = $this->createUniqueAlphanumericCode(substr($nameArray[0], 0, 3));
+            }
+            if (strlen($clientName) == 1) {
+                $lessThan2Characters = substr($nameArray[0], 0, 1);
+                $secondLetter = 'A';
+                $thirdLetter = 'A';
+                $numericPart = 1;
+                while (true) {
+                    if ( $numericPart <= 2) {
+                        $numericPart++;
+                        // $thirdLetter = chr(ord($thirdLetter) + 1);
+                    } else if ($thirdLetter == 'B' && $numericPart > 2) {
+                        $secondLetter = chr(ord($secondLetter) + 1);
+                        $thirdLetter = 'A';
+                        $numericPart = 1;
+                    } else if ($secondLetter == 'B' && $numericPart > 2) {
+                        // Reset the letter and increment the numeric part
+                        $secondLetter = chr(ord($secondLetter) + 1);
+                        $thirdLetter = 'A';
+                        $numericPart=1;
+                    }
+
+
+                    $uniqueAplhanumericCode = $lessThan2Characters . $secondLetter . $thirdLetter . $numericPart;
+
+                    // check if the code exists in the database
+                    $sql = "SELECT COUNT(*) FROM clients WHERE client_code =?";
+                    $stmt = $this->connect()->prepare($sql);
+                    $stmt->execute([$uniqueAplhanumericCode]);
+
+                    $count = $stmt->fetchColumn();
+                    if ($count == 0) {
+                        // count == means the code is unique and can be returned as the new unique code
+                        return strtoupper($uniqueAplhanumericCode);
+                    }
+                    // if count == 0 is not true, this means we increment the number and try again. 
+                    $numericPart++;
+                    // $secondLetter = chr(ord($secondLetter) + 1);
+
+                }
+                // $clientCode = $lessThan2Charaters . chr(rand(65, 90));
+            } elseif (strlen($clientName) > 2) {
+                $clientCode = $this->createUniqueAlphanumericCode(substr($nameArray[0], 0, 3));
             }
         } elseif ($nameCount == 2) {
             // If two words, take the first letter of each and add a random letter
-            $clientCode = $nameArray[0][0] . $nameArray[1][0] . $nameArray[1][1]; // Random uppercase letter
+            $clientCode = $this->createUniqueAlphanumericCode($nameArray[0][0] . $nameArray[1][0] . $nameArray[1][1]);
         } elseif ($nameCount >= 3) {
             // If three or more words, take the first letter of the first three words
-            $clientCode = $nameArray[0][0] . $nameArray[1][0] . $nameArray[2][0];
+            $clientCode = $this->createUniqueAlphanumericCode($nameArray[0][0] . $nameArray[1][0] . $nameArray[2][0]);;
         }
 
         // Return the client code in uppercase (optional but ensures uniformity)
         return strtoupper($clientCode);
     }
+
+
 
     private function createUniqueAlphanumericCode($clientCode)
     {
@@ -65,7 +133,7 @@ class Client extends Database
         $clientCode = $this->createClientCode($name);
 
         // Then we create our unique alphanumeric code
-        $uniqueCode = $this->createUniqueAlphanumericCode($clientCode);
+        // $uniqueCode = $this->createUniqueAlphanumericCode($clientCode);
 
         // SQL query to insert the client
         $sql = "INSERT INTO clients (client_name, client_code) VALUES (?, ?)";
@@ -74,7 +142,7 @@ class Client extends Database
         try {
             $conn = $this->connect();
             $stmt = $conn->prepare($sql);
-            $stmt->execute([$name, $uniqueCode]);
+            $stmt->execute([$name, $clientCode]);
             $last_id = $conn->lastInsertId();
 
             if ($last_id != null) {

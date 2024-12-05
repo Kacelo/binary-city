@@ -74,247 +74,34 @@ require_once '../includes/clients.inc.php';
         </div>
     </div>
 </div>
+<script src="../scripts/clients/add-new-client.js"></script>
+<script src="../scripts/clients/launch-modal.js"></script>
+<script src="../scripts/clients/components/contact-tab.js"></script>
+<script src="../scripts/clients/save-selected-contacts.js"></script>
+<script src="../scripts/helper-functions/delete-link.js"></script>
+<script src="../scripts/helper-functions/error-handlers.js"></script>
 
 <script>
-    document.getElementById('client_create').addEventListener('submit', async function(e) {
-        e.preventDefault(); // Prevent the default form submission
-
-        const formData = new FormData(this); // Collect form data
-
-        // Log FormData contents
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-        try {
-            // AJAX
-            const response = await fetch('../includes/clients-create.inc.php', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const result = await response.json(); // Parse JSON response
-
-            if (result.status === 'success') {
-                const clientCodeInput = document.getElementById('disabledTextInput');
-                const clientNameInput = document.getElementById('client_name');
-                const saveClientBtn = document.getElementById('save_client');
-                const linkClientBtn = document.getElementById('modalTriggerButton');
-                const errorContainer = document.getElementById("error-container");
-                errorContainer.innerHTML = ""; 
-                if (clientCodeInput && clientNameInput) {
-                    clientCodeInput.value = result.data.client_code;
-                    clientNameInput.value = result.data.client_name;
-                    linkClientBtn.style = "display: visible";
-                    saveClientBtn.style = "display:none";
-                } else {
-                    console.error('Input with ID "disabledTextInput" not found.');
-                }
-
-                const clientIdInput = document.getElementById('client_id_input');
-                if (clientIdInput) {
-                    clientIdInput.value = result.data.client_id;
-                }
-            } else if (result.errors) {
-                displayErrors(result.errors)
-            } else {
-                console.error('Failed response:', result);
-                alert(result.message || 'Submission failed.');
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
-    });
     // document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('modalTriggerButton').addEventListener('click', async function() {
-        const clientIdInput = document.getElementById('client_id_input');
+ 
 
-        if (!clientIdInput || !clientIdInput.value) {
-            alert("Client ID is required!");
-            return;
-        }
 
-        const clientId = clientIdInput.value;
 
-        try {
-            // get request to pass ID as parameter to fetch availabe contacts
-            const response = await fetch(`../includes/fetch-available-contacts.inc.php?client_id=${encodeURIComponent(clientId)}`);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+    // function displayErrors(errors) {
+    //     if (Object.keys(errors).length > 0) {
+    //         const errorContainer = document.getElementById("error-container");
+    //         errorContainer.innerHTML = "";
 
-            const contacts = await response.json();
-
-            if (contacts.availableContacts && contacts.availableContacts.length > 0) {
-                const tableBody = document.querySelector('.form #contactsTable tbody');
-                tableBody.innerHTML = ''; // Clear existing rows
-
-                contacts.availableContacts.forEach(contact => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td>${contact.contact_name}</td>
-                    <td>${contact.contact_email}</td>
-                    <td><input type="checkbox" class="form-check-input" value="${contact.contact_id}"></td>
-                `;
-                    tableBody.appendChild(row);
-                });
-
-                // Show the modal
-                document.getElementById('contactsModal').style.display = 'block';
-            } else {
-                alert('No available contacts found.');
-            }
-        } catch (error) {
-            console.error("Error fetching contacts:", error);
-        }
-    });
-    document.getElementById("save_link").addEventListener('click', async function() {
-        const clientId = document.getElementById("client_id_input");
-        const selectedContacts = Array.from(document.querySelectorAll('#contactsTable input[type="checkbox"]:checked'))
-            .map(checkbox => checkbox.value);
-        if (selectedContacts.length === 0) {
-            alert('No contacts selected.');
-            return;
-        }
-        try {
-
-            const response = await fetch('../includes/link-clients-to-contacts.inc.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    client_id: clientId.value,
-                    contact_ids: selectedContacts,
-                }),
-            });
-
-            if (response.status === 200) {
-                alert('Contacts linked successfully!');
-                $('#exampleModalCenter').modal('hide');
-            } else {
-                alert(result.message || 'Failed to link contacts.');
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    })
-    document.getElementById("contacts_tab").addEventListener("click", async function() {
-        const clientId = document.getElementById("client_id_input");
-        if (clientId.value !== 0) {
-            try {
-                const response = await fetch("../includes/fetch-linked-contacts.inc.php", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        client_id: clientId.value,
-                    }),
-                })
-                const result = await response.json();
-                console.log("Response from server:", result);
-
-                if (result.status === "success") {
-                    console.log("Contacts:", result.linkedContacts);
-                    // You can now populate the modal or a table with the contacts
-                    const contacts = result.linkedContacts;
-                    renderContactsTable(contacts, clientId); // Example: Update a table or modal with the fetched data
-                    // populateContactsTable(result.data);
-                } else {
-                    console.error("Server Error:", result.message);
-                    // alert(result.message || "An error occurred while fetching contacts.");
-                }
-            } catch (error) {
-                console.error("An unexpected error occurred:", error);
-                // alert("An unexpected error occurred. Please try again.");
-            }
-        }
-
-    })
-
-    async function ConfirmDelete(client_id, contact_id) {
-        alert('Are you sure want to delete this client link ?');
-        try {
-            const response = await fetch('../includes/unlink-contact-client.inc.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    client_id: client_id,
-                    contact_id: contact_id
-                })
-            });
-            const result = await response.json();
-            if (result.deleted === true) {
-                alert('Link has been deleted');
-            } else {
-                console.error("Server Error:", result.message);
-            }
-        } catch (error) {
-            console.error("An unexpected error occurred:", error);
-
-        }
-
-    }
-
-    function displayErrors(errors) {
-        if (Object.keys(errors).length > 0) {
-            const errorContainer = document.getElementById("error-container");
-            errorContainer.innerHTML = "";
-
-            // Iterate through the errors object
-            for (const [field, message] of Object.entries(errors)) {
-                const errorRow = document.createElement("div");
-                errorRow.innerHTML = `<p>${message}</p>`;
-                errorRow.className = "form-error";
-                errorContainer.appendChild(errorRow);
-            }
-        }
-    }
-
-    function renderContactsTable(contacts, clientId) {
-        const tableContainer = document.getElementById("contacts_table_container");
-
-        // Clear previous content
-        tableContainer.innerHTML = "";
-
-        if (contacts.length > 0) {
-            // Create table element
-            const table = document.createElement("table");
-            table.className = "table table-bordered";
-
-            // Create table header
-            const thead = document.createElement("thead");
-            thead.innerHTML = `
-            <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th></th>
-            </tr>
-        `;
-            table.appendChild(thead);
-
-            // Create table body
-            const tbody = document.createElement("tbody");
-
-            contacts.forEach(contact => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                <td>${contact.full_name}</td>
-                <td>${contact.contact_email}</td>
-                <td><a onclick="return ConfirmDelete(${clientId.value},${contact.contact_id});" class="" id="unlinkClient">Unlink Contact</a></td>
-            `;
-                tbody.appendChild(row);
-            });
-
-            table.appendChild(tbody);
-            tableContainer.appendChild(table); // Append table to the container
-        } else {
-            tableContainer.innerHTML = "<p>No contacts found.</p>";
-        }
-    }
+    //         // Iterate through the errors object
+    //         for (const [field, message] of Object.entries(errors)) {
+    //             const errorRow = document.createElement("div");
+    //             errorRow.innerHTML = `<p>${message}</p>`;
+    //             errorRow.className = "form-error";
+    //             errorContainer.appendChild(errorRow);
+    //         }
+    //     }
+    // }
 </script>
 
 <?php include 'footer.php'; ?>
