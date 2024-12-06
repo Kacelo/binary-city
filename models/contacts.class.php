@@ -133,4 +133,41 @@ class Contact extends Database
             return [];
         }
     }
+
+    public function updateContactDetails($contact_name, $contact_surname, $contact_email, $contact_id)
+    {
+        // find contact first
+
+        $sqlFetch = "SELECT * FROM contacts WHERE contact_id =?";
+        try {
+            //code...
+            $conn = $this->connect();
+            
+            $stmt = $conn->prepare($sqlFetch);
+            $stmt->execute([$contact_id]);
+            $contact = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if ($contact) {
+                // if found then we proceed to update. 
+
+                $sqlUpdate = 'UPDATE contacts SET contact_name=? contact_surname=? contact_email=? WHERE contact_id =?';
+                try {
+                    //code...
+                    $stmt = $conn->prepare($sqlUpdate);
+                    $stmt->execute([$contact_name, $contact_surname, $contact_email, $contact_id]);
+                    return ['success' => true, 'message' => 'Contact updated successfully.'];
+                } catch (PDOException $e) {
+                    //throw $th;
+                    error_log("Error updating contact: " . $e->getMessage());
+                    return ['success' => false, 'message' => 'Failed to update contact.'];
+                }
+            } else {
+                // Contact not found
+                return ['success' => false, 'message' => 'Contact not found.'];
+            }
+        } catch (PDOException $e) {
+            //throw $th;
+            error_log("Error fetching contact: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to fetch contact.'];
+        }
+    }
 }

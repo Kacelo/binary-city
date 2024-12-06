@@ -21,14 +21,10 @@ class Client extends Database
             if (strlen($clientName) == 2) {
                 $lessThan2Characters = substr($nameArray[0], 0, 2);
                 $thirdLetter = 'A';
-                $numericPart = 2;
+                $numericPart = 1;
                 while (true) {
-                    if ($thirdLetter > 'B' && $numericPart > 2) {
-                        // Reset the letter and increment the numeric part
-                        $thirdLetter = 'A';
-                        $numericPart++;
-                    }
-                    $uniqueAplhanumericCode = $lessThan2Characters . $thirdLetter . $numericPart;
+
+                    $uniqueAplhanumericCode = $lessThan2Characters . $thirdLetter . sprintf("%03d", $numericPart);
 
                     // check if the code exists in the database
                     $sql = "SELECT COUNT(*) FROM clients WHERE client_code =?";
@@ -40,8 +36,17 @@ class Client extends Database
                         // count == means the code is unique and can be returned as the new unique code
                         return strtoupper($uniqueAplhanumericCode);
                     }
+                    $numericPart++;
+                    if ($numericPart > 999) {
+                        $numericPart = 1;
+                        $thirdLetter = chr(ord($thirdLetter) + 1);
+                    }
+                    if ($thirdLetter > 'Z') {
+                        throw new Exception("Exceeded maximum alphanumeric combinations for client code.");
+                    }
+
                     // if count == 0 is not true, this means we increment the number and try again. 
-                    // $numericPart++;
+                    $numericPart++;
                     $thirdLetter = chr(ord($thirdLetter) + 1);
                 }
                 // $clientCode = $lessThan2Charaters . chr(rand(65, 90));
@@ -53,23 +58,17 @@ class Client extends Database
                 $secondLetter = 'A';
                 $thirdLetter = 'A';
                 $numericPart = 1;
+
                 while (true) {
-                    if ( $numericPart <= 2) {
-                        $numericPart++;
-                        // $thirdLetter = chr(ord($thirdLetter) + 1);
-                    } else if ($thirdLetter == 'B' && $numericPart > 2) {
-                        $secondLetter = chr(ord($secondLetter) + 1);
-                        $thirdLetter = 'A';
-                        $numericPart = 1;
-                    } else if ($secondLetter == 'B' && $numericPart > 2) {
-                        // Reset the letter and increment the numeric part
-                        $secondLetter = chr(ord($secondLetter) + 1);
-                        $thirdLetter = 'A';
-                        $numericPart=1;
-                    }
+                    // $numericPart++;
+                    // if AAA1
+                    // increase to AAA2 (NUM > 2) INCREASE  3RD AND RESET NUM
+                    // if we increase again
+                    // result should be AAB1 
+                    // Increase to AAB2 IF 3rd > B and NUM > 2 
+                    // INCREASE TO ABA1 increase second, reset second and num
 
-
-                    $uniqueAplhanumericCode = $lessThan2Characters . $secondLetter . $thirdLetter . $numericPart;
+                    $uniqueAplhanumericCode = $lessThan2Characters . $secondLetter . $thirdLetter . sprintf("%03d", $numericPart);
 
                     // check if the code exists in the database
                     $sql = "SELECT COUNT(*) FROM clients WHERE client_code =?";
@@ -81,10 +80,20 @@ class Client extends Database
                         // count == means the code is unique and can be returned as the new unique code
                         return strtoupper($uniqueAplhanumericCode);
                     }
-                    // if count == 0 is not true, this means we increment the number and try again. 
                     $numericPart++;
-                    // $secondLetter = chr(ord($secondLetter) + 1);
 
+                    if ($numericPart > 999) {
+                        $numericPart = 1;
+                        $thirdLetter = chr(ord($thirdLetter) + 1);
+                    }
+                    if ($thirdLetter > 'Z') {
+                        $thirdLetter = 'A';
+                        $numericPart = 1;
+                        $secondLetter = chr(ord($secondLetter) + 1);
+                    }
+                    if ($secondLetter > 'Z') {
+                        throw new Exception("Exceeded maximum alphanumeric combinations for client code.");
+                    }
                 }
                 // $clientCode = $lessThan2Charaters . chr(rand(65, 90));
             } elseif (strlen($clientName) > 2) {
@@ -192,6 +201,7 @@ class Client extends Database
             return null; // Return null in case of error
         }
     }
+    
 
 
     public function countLinkedContacts($client_id)
