@@ -4,6 +4,9 @@ require_once '../includes/clients.inc.php';
 ?>
 <div>
     <!-- Edit Form -->
+     <div>
+        <h1>Edit Contact Details</h1>
+     </div>
     <form action="" method="post" id="contact_edit">
         <div class="mb-3">
             <label for="contact_name" class="form-label">Name</label>
