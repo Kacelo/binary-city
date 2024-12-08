@@ -1,7 +1,10 @@
-function launchUserUpdateModal(contact_id) {
+function launchUserUpdateModal() {
   const modal = document.createElement("updateModal");
+  console.log("I have been clicked");
+  const div = document.getElementById("userDetailsUpdate");
+  // $('#exampleModalCenter').modal('show')
   modal.innerHTML = `
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -35,7 +38,10 @@ function launchUserUpdateModal(contact_id) {
     </div>
   </div>
     `;
-  const div = document.createElement("div");
+  const model = document.createElement("updateModal");
+  model.innerHTML = `
+
+<p>Hi</p>`;
 
   div.appendChild(modal);
 }
@@ -48,26 +54,35 @@ function launchUserUpdateModal(contact_id) {
 //         )}`
 //       );
 //   } catch (error) {
-    
+
 //   }
 // }
-
-function displayUpdateModal(contact_name, contact_surname, contact_email, contact_id) {
+document.getElementById ("update_details").addEventListener('click', ()=>{
+  const contact_id = document.getElementById("contact_id_option")
+  const contact_ids = document.getElementsByClassName("contact_ids")
+  console.log(contact_ids)
+  if (contact_id){}
+})
+function displayUpdateModal(
+  contact_name,
+  contact_surname,
+  contact_email,
+  contact_id
+) {
   document.addEventListener("click", async (event) => {
-    if (event.target.classList.contains("launchContactDetailsUpdate")) {
-      const contactId = event.target.getAttribute("data-contact-id");
+    if (event.target.id === "contactDetailsUpdate") {
+      // const contactId = event.target.getAttribute("data-contact-id");
 
       try {
-
         // Render modal in the container
         const modalContainer = document.getElementById("contactDetailsUpdate");
         modalContainer.innerHTML =
           document.getElementById("modalTemplate").innerHTML;
-
+        launchUserUpdateModal();
         // Fill form with fetched details
-        document.getElementById("contact_id").value = contactId;
+        document.getElementById("contact_id").value = contact_id;
         document.getElementById("contact_name").value = contact_name;
-        document.getElementById("contact_surname").value =contact_surname;
+        document.getElementById("contact_surname").value = contact_surname;
         document.getElementById("contact_email").value = contact_email;
 
         // Show the modal
@@ -77,23 +92,24 @@ function displayUpdateModal(contact_name, contact_surname, contact_email, contac
         alert("Error fetching contact details.");
       }
     }
+    console.log("not true");
   });
 }
 // Save contact details
 document.addEventListener("click", (event) => {
-    if (event.target.id === "saveContactDetails") {
-      const form = document.getElementById("contactDetailsForm");
-      if (form.checkValidity()) {
-        const formData = new FormData(form);
+  if (event.target.id === "saveContactDetails") {
+    const form = document.getElementById("contactDetailsForm");
+    if (form.checkValidity()) {
+      const formData = new FormData(form);
 
-        // Simulate saving data (replace this with an actual API call)
-        console.log("Saving contact details:", Object.fromEntries(formData));
-        alert("Contact details saved successfully!");
+      // Simulate saving data (replace this with an actual API call)
+      console.log("Saving contact details:", Object.fromEntries(formData));
+      alert("Contact details saved successfully!");
 
-        // Hide the modal
-        $("#exampleModalCenter").modal("hide");
-      } else {
-        form.reportValidity();
-      }
+      // Hide the modal
+      $("#exampleModalCenter").modal("hide");
+    } else {
+      form.reportValidity();
     }
-  });
+  }
+});

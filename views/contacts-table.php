@@ -6,8 +6,8 @@ require_once '../includes/fetch-contacts.inc.php';
     <h1>Contacts View</h1>
     <table class="table table-striped-columns table-bordered">
         <a href="../../binary-city/views/contacts-form.php" class="btn btn-primary">Add new contact</a>
-        <div id="userDetailsUpdate">
-            
+        <div id="contactDetailsUpdate">
+
         </div>
         <?php if (!empty($contacts)) : ?>
             <thead>
@@ -29,15 +29,15 @@ require_once '../includes/fetch-contacts.inc.php';
                         <td><!-- Example single danger button -->
                             <div class="btn-group">
                                 <button type="button" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-                                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                                </svg>                                </button>
-                                
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+                                    </svg> </button>
+
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="#">Add new link</a>
-                                    <a class="dropdown-item" href="#">Update Details</a>
+                                    <a class="dropdown-item contact_ids" href="../../binary-city/views/edit-contact-form.php?contact_email=<?php echo ($contact['contact_email']) ?>" id="update_details">Update Details</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Delete</a>
+                                    <a class="dropdown-item" href="google.com">Delete</a>
                                 </div>
                             </div>
                         </td>
@@ -57,5 +57,5 @@ require_once '../includes/fetch-contacts.inc.php';
     </table>
 
 </div>
-
+<!-- <script src="../scripts/contacts/components/update-contact-modal.js"></script> -->
 <?php include 'footer.php'; ?>

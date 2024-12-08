@@ -87,3 +87,15 @@ class UpdateContactDetails extends Contact
         return $this->updateContactDetails($this->contact_name, $this->contact_surname, $this->contact_email, $this->contact_id);
     }
 }
+class FetchContactByEmail extends Contact
+{
+    private $contact_email;
+    public function __construct($contact_email)
+    {
+        $this->contact_email = $contact_email;
+    }
+    public function fetchContactByEmail()
+    {
+        return $this->fetchByEmail($this->contact_email);
+    }
+}
