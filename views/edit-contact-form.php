@@ -4,9 +4,9 @@ require_once '../includes/clients.inc.php';
 ?>
 <div>
     <!-- Edit Form -->
-     <div>
+    <div>
         <h1>Edit Contact Details</h1>
-     </div>
+    </div>
     <form action="" method="post" id="contact_edit">
         <div class="mb-3">
             <label for="contact_name" class="form-label">Name</label>
@@ -19,12 +19,20 @@ require_once '../includes/clients.inc.php';
         <div class="mb-3">
             <label for="contact_email" class="form-label">Email</label>
             <input type="text" class="form-control" id="contact_email" name="contact_email" placeholder="Enter contact email">
+
         </div>
-        <button type="submit" class="btn btn-primary" name="submit" id="save_client">Save Contact</button>
-        <button type="button" class="btn btn-success" name="submit" style="display: none;" data-toggle="modal" data-target="#exampleModalCenter" id="modalTriggerButton">Link to a client</button>
+        <div class="mb-3">
+            <label for="contact_id" class="form-label">ID</label>
+            <input type="text" class="form-control" id="contact_id" name="contact_id" placeholder="Enter contact surname">
+
+        </div>
+
+        <button type="submit" class="btn btn-primary" name="submit" id="update_contact">Save Contact</button>
+        <!-- <button type="button" class="btn btn-success" name="submit" style="display: none;" data-toggle="modal" data-target="#exampleModalCenter" id="modalTriggerButton">Link to a client</button> -->
 
         <!-- <button type="submit" class="btn btn-success" name="" style="display: none;" id="modalTriggerButton">Link to a contact</button> -->
     </form>
 </div>
 
 <script src="../scripts/contacts/fetch-contact-email.js"></script>
+<script src="../scripts/contacts/update-contact.js"></script>

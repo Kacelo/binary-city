@@ -3,6 +3,7 @@
 require_once '../config/database.php';
 include "../models/contacts.class.php";
 include "../controller/contact-controller.php";
+header('Content-Type: application/json');
 
 try {
     //code...
@@ -33,9 +34,11 @@ try {
         // PROCEED WITH UPDATE
         $updateContact = new UpdateContactDetails($contact_name, $contact_surname, $contact_email, $contact_id);
 
-        $updatedContact = $pdateContact->updateCurrentContact();
-        echo json_encode(['status' => 'success', 'data' => $updatedContact]);
-        exit();
+        $updatedContact = $updateContact->updateCurrentContact();
+        if ($updatedContact) {
+            echo json_encode(['status' => 'success', 'data' => $updatedContact]);
+            exit();
+        }
     }
 } catch (Exception $e) {
     // Handle server-side errors gracefully

@@ -20,7 +20,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       console.log(response);
       const data = await response.json();
-      console.log('data',data);
+
+      console.log("data", data);
+
       if (data.status === "success") {
         document.getElementById("contact_name").value =
           data.contact.contact_name;
@@ -28,6 +30,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           data.contact.contact_surname;
         document.getElementById("contact_email").value =
           data.contact.contact_email;
+        const id = document.getElementById("contact_id").value =
+        data.contact.contact_id;
+
+        console.log('where is the ID?', id)
+
       }
     } catch (error) {
       console.error("Error fetching contact details:", error);
