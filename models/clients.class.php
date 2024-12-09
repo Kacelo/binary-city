@@ -201,7 +201,7 @@ class Client extends Database
             return null; // Return null in case of error
         }
     }
-    
+
 
 
     public function countLinkedContacts($client_id)
@@ -324,6 +324,29 @@ class Client extends Database
             }
         } else {
             return []; // Return an empty array if no client_id is provided
+        }
+    }
+    public function searchUnlinkedClients($contact_id, $search_term)
+    {
+        if (!empty($contact_id) && !empty($search_term)) {
+            $sql = "SELECT cl.client_id, cl.client_name, cl.client_code
+                FROM clients cl
+                LEFT JOIN client_contacts cc 
+                ON cl.client_id = cc.client_id AND cc.contact_id = ?
+                WHERE cc.contact_id IS NULL
+                && (cl.client_name LIKE ? OR cl.client_code LIKE ?);";
+            try {
+                $stmt = $this->connect()->prepare($sql);
+                // Add wildcards for partial matching
+                $search_term = '%' . $search_term . '%';
+                $stmt->execute([$contact_id, $search_term, $search_term]);
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                error_log("Error searching unlinked clients: " . $e->getMessage());
+                return [];
+            }
+        } else {
+            return []; // Return an empty array if input is invalid
         }
     }
 }

@@ -48,7 +48,7 @@ class FetchLinkedClientsController extends Client
 
     public function fetchLinkedClients()
     {
-        return $this->getLinkedClients($this->contact_id); 
+        return $this->getLinkedClients($this->contact_id);
     }
 }
 
@@ -64,5 +64,21 @@ class FetchAvailableClients extends Client
     public function fetchAvailableClients()
     {
         return $this->getAvailableClients($this->contact_id);
+    }
+}
+class SearchAvailableClientsController extends Client
+{
+    private $contact_id;
+    private $search_term;
+
+    public function __construct($contact_id, $search_term)
+    {
+        $this->contact_id = $contact_id;
+        $this->search_term = $search_term;
+    }
+
+    public function searchAvailableClients()
+    {
+        return $this->searchUnlinkedClients($this->contact_id, $this->search_term);
     }
 }

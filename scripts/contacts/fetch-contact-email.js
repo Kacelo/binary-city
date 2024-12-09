@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           data.contact.contact_surname;
         document.getElementById("contact_email").value =
           data.contact.contact_email;
-        const id = document.getElementById("contact_id").value =
+        const id = document.getElementById("contact_id_edit").value =
         data.contact.contact_id;
 
         console.log('where is the ID?', id)

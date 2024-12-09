@@ -6,7 +6,7 @@ require_once '../includes/clients.inc.php';
     <h1>Create a new contact</h1>
     <ul class="nav nav-tabs">
         <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#home">General</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1" id="contacts_tab">Clients</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1" id="clients_tab">Clients</a></li>
     </ul>
 
     <div class="tab-content">
@@ -21,30 +21,33 @@ require_once '../includes/clients.inc.php';
                             </button>
                         </div>
                         <div class="modal-body modal-lg bd-example-modal-lg">
-                            <div class="container-md mt-5">
-                                <form action="" method="post" id="linking_from" class="form">
-                                    <!-- Hidden input for client_id -->
-                                    <input type="hidden" name="client_id" value="" id="contact_id_input">
-                                    <table class="table table-striped-columns table-bordered" id="contactsTable">
-                                        <tbody>
+                            <div class="container-md">
+                                <!-- Search Field -->
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="searchClients" placeholder="Search by name or code...">
+                                </div>
+                                <!-- Client Table -->
+                                <form action="" method="post" id="linking_form" class="form">
+                                    <!-- Hidden input for contact_id -->
+                                    <input type="" name="contact_id" value="" id="contact_id_input">
+                                    <table class="table table-striped table-bordered" id="contactsTable">
+                                    <tbody>
                                             <tr>
                                                 <td colspan="4">No contacts found.</td>
                                             </tr>
                                         </tbody>
-
                                     </table>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    </div>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" id="save_link">Save changes</button>
-
                                 </form>
-
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="save_link">Save changes</button>
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-- Default Form -->
             <form action="" method="post" id="contact_create">
                 <div class="mb-3">
@@ -86,6 +89,8 @@ require_once '../includes/clients.inc.php';
 <script src="../scripts/contacts/save-selected-clients.js"></script>
 <script src="../scripts/helper-functions/delete-link.js"></script>
 <script src="../scripts/helper-functions/error-handlers.js"></script>
+<script src="../scripts/contacts/search-for-available-clients.js"></script>
+
 <script>
     // document.addEventListener('DOMContentLoaded', () => {
 
@@ -124,8 +129,6 @@ require_once '../includes/clients.inc.php';
         }
 
     }
-
-
 </script>
 
 <?php include 'footer.php'; ?>

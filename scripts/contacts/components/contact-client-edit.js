@@ -1,5 +1,6 @@
 function renderClientsTable(clients, contactId) {
   const tableContainer = document.getElementById("contacts_table_container");
+  
   // Clear previous content
   tableContainer.innerHTML = "";
 
@@ -11,12 +12,12 @@ function renderClientsTable(clients, contactId) {
     // Create table header
     const thead = document.createElement("thead");
     thead.innerHTML = `
-        <tr>
-            <th>Client Name</th>
-            <th>Client Code</th>
-            <th></th>
-        </tr>
-    `;
+          <tr>
+              <th>Client Name</th>
+              <th>Client Code</th>
+              <th></th>
+          </tr>
+      `;
     table.appendChild(thead);
 
     // Create table body
@@ -24,10 +25,10 @@ function renderClientsTable(clients, contactId) {
     clients.forEach((client) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-            <td>${client.client_name}</td>
-            <td>${client.client_code}</td>
-            <td><a onclick="return ConfirmDelete(${client.client_id},${contactId.value});" class="" id="unlinkClient">Unlink Client</a></td>
-        `;
+              <td>${client.client_name}</td>
+              <td>${client.client_code}</td>
+              <td><a onclick="return ConfirmDelete(${client.client_id},${contactId.value});" class="" id="unlinkClient">Unlink Client</a></td>
+          `;
       tbody.appendChild(row);
     });
 
@@ -39,9 +40,9 @@ function renderClientsTable(clients, contactId) {
 }
 
 document
-  .getElementById("clients_tab")
+  .getElementById("clients_edit_tab")
   .addEventListener("click", async function () {
-    const contactId = document.getElementById("contact_id_input");
+    const contactId = document.getElementById("contact_id_edit");
     console.log("contact ID", contactId);
     if (contactId.value !== 0) {
       try {
@@ -64,6 +65,7 @@ document
           console.log("Contacts:", result);
           // You can now populate the modal or a table with the contacts
           const clients = result.linkedClients;
+          console.log(clients)
           renderClientsTable(clients, contactId); // Example: Update a table or modal with the fetched data
           // populateContactsTable(result.data);
         } else {
@@ -76,5 +78,3 @@ document
       }
     }
   });
-
-

@@ -8,7 +8,7 @@ document
       return;
     }
     const contactId = contactIdInput.value;
-    console.log("Client ID:", contactId);
+    console.log("contactId ID:", contactId);
     try {
       const response = await fetch(
         `../includes/fetch-available-clients.inc.php?contact_id=${encodeURIComponent(

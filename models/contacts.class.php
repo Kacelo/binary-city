@@ -180,5 +180,7 @@ class Contact extends Database
             return ['success' => false, 'message' => 'Failed to fetch contact.'];
         }
     }
+
+    
     
 }
