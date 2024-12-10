@@ -117,7 +117,7 @@ class Contact extends Database
 
     public function fetchContactsWithNoOfLinkedClients()
     {
-        $sql = "SELECT CONCAT(co.contact_name, ' ', co.contact_surname) AS full_name,co.contact_name,co.contact_surname, co.contact_email,
+        $sql = "SELECT CONCAT(co.contact_name, ' ', co.contact_surname) AS full_name,co.contact_name,co.contact_surname, co.contact_email,co.contact_id,
         COUNT(cc.client_id) AS linked_clients
         FROM contacts co
         LEFT JOIN client_contacts cc ON co.contact_id = cc.contact_id
@@ -133,4 +133,54 @@ class Contact extends Database
             return [];
         }
     }
+    public function fetchByEmail($contact_email)
+    {
+        try {
+            $sql = "SELECT * FROM contacts WHERE contact_email=?";
+            $stmt = $this->connect()->prepare($sql);
+            $stmt->execute([$contact_email]);
+            // $contact = $stmt->fetch(PDO::FETCH_ASSOC);
+            // echo json_encode(['status' => 'success', 'contact' => $contact]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+
+            //code...
+        } catch (PDOException $e) {
+            //throw $th;
+            error_log("Error fetching contact: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to fetch contact.'];
+        }
+    }
+
+    public function updateContactDetails($contact_name, $contact_surname, $contact_email, $contact_id)
+    {
+        $sqlFetch = "SELECT * FROM contacts WHERE contact_id = ?";
+        try {
+            $conn = $this->connect();
+            $stmt = $conn->prepare($sqlFetch);
+            $stmt->execute([$contact_id]);
+            $contact = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            if ($contact) {
+                // Contact found; proceed to update
+                $sqlUpdate = 'UPDATE contacts SET contact_name=?, contact_surname=?, contact_email=? WHERE contact_id=?';
+                try {
+                    $stmt = $conn->prepare($sqlUpdate);
+                    $stmt->execute([$contact_name, $contact_surname, $contact_email, $contact_id]);
+                    return ['success' => true, 'message' => 'Contact updated successfully.'];
+                } catch (PDOException $e) {
+                    error_log("Error updating contact: " . $e->getMessage());
+                    return ['success' => false, 'message' => 'Failed to update contact.'];
+                }
+            } else {
+                // Contact not found
+                return ['success' => false, 'message' => 'Contact not found.'];
+            }
+        } catch (PDOException $e) {
+            error_log("Error fetching contact: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to fetch contact.'];
+        }
+    }
+
+    
+    
 }

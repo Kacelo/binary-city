@@ -110,3 +110,5 @@ WHERE cc.contact_id IS NULL
 ORDER BY cl.client_name ASC;
 
 
+
+
