@@ -12,7 +12,7 @@ document
       });
       const result = await response.json(); // Parse JSON response
       console.log("Result", result);
-      if (result.status === "success") {
+      if (result[0].success === true) {
         alert("Contact Has been Updated Successfully");
         const contactEmailInput = document.getElementById("contact_email");
         const contactNameInput = document.getElementById("contact_name");
@@ -21,7 +21,7 @@ document
         displayErrors(result.errors);
       } else {
         console.error("Failed response:", result);
-        alert(result.message || "Submission failed.");
+        alert(result[0].message || "Submission failed.");
       }
     } catch (error) {
       console.error("An error occurred:", error);

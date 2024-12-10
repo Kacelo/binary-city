@@ -36,7 +36,7 @@ try {
 
         $updatedContact = $updateContact->updateCurrentContact();
         if ($updatedContact) {
-            echo json_encode(['status' => 'success', 'data' => $updatedContact]);
+            echo json_encode([$updatedContact]);
             exit();
         }
     }
