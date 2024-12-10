@@ -17,6 +17,11 @@ document
         const contactEmailInput = document.getElementById("contact_email");
         const contactNameInput = document.getElementById("contact_name");
         const contactSurnameInput = document.getElementById("contact_surname");
+      } else if (result.errors) {
+        displayErrors(result.errors);
+      } else {
+        console.error("Failed response:", result);
+        alert(result.message || "Submission failed.");
       }
     } catch (error) {
       console.error("An error occurred:", error);

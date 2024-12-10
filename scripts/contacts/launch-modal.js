@@ -36,7 +36,7 @@ document
         });
 
         // Show the modal
-        document.getElementById("contactsModal").style.display = "block";
+        // document.getElementById("contactsModal").style.display = "block";
       } else {
         alert("No available contacts found.");
       }
@@ -45,8 +45,4 @@ document
     }
   });
 
-document
-  .getElementById("updateDetailsModal")
-  .addEventListener("click", async function () {
-    
-  });
+

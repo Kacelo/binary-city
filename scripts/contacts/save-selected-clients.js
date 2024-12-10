@@ -25,7 +25,7 @@ document.getElementById("save_link").addEventListener('click', async function() 
         console.log("response:", response.status)
         if (response.status === 200) {
             alert('Clients linked successfully!');
-            $('#exampleModalCenter').modal('hide');
+            $('#clientsModal').modal('hide');
         } else {
             alert(result.message || 'Failed to link contacts.');
         }

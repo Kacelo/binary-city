@@ -1,10 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const searchField = document.getElementById("searchClients");
   const tableBody = document.querySelector(".form #contactsTable tbody");
-  //   if (!contactIdInput || !contactIdInput.value) {
-  //     alert("contact ID is required!");
-  //     return;
-  //   }
 
   searchField.addEventListener("input", async () => {
     const contactIdInput = document.getElementById("contact_id_input");
@@ -13,10 +9,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchTerm = searchField.value.trim();
     console.log(searchTerm);
     if (searchTerm.length >= 2) {
+      console.log("returning searched");
+
       try {
         const response = await fetch(
           `../includes/search-unlinked-clients.inc.php?contact_id=${encodeURIComponent(
-            25
+            contactId
           )}&search_term=${encodeURIComponent(searchTerm)}`
         );
         const data = await response.json();
@@ -34,7 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } else if (searchTerm.length >= 1) {
       tableBody.innerHTML = `<tr><td colspan="4">Type at least 2 characters to search.</td></tr>`;
-    } else {
+    } else if (searchTerm.length == 0) {
+      console.log("returning available");
       try {
         const response = await fetch(
           `../includes/fetch-available-clients.inc.php?contact_id=${encodeURIComponent(
