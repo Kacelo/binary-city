@@ -18,23 +18,100 @@ class Client extends Database
         if ($nameCount == 1) {
             // If only one word, take the first 3 letters of the single word
 
-            if (strlen($clientName) <= 2) {
-                $lessThan2Charaters = substr($nameArray[0], 0, 2);
-                $clientCode = $lessThan2Charaters . chr(rand(65, 90));
+            if (strlen($clientName) == 2) {
+                $lessThan2Characters = substr($nameArray[0], 0, 2);
+                $thirdLetter = 'A';
+                $numericPart = 1;
+                while (true) {
+
+                    $uniqueAplhanumericCode = $lessThan2Characters . $thirdLetter . sprintf("%03d", $numericPart);
+
+                    // check if the code exists in the database
+                    $sql = "SELECT COUNT(*) FROM clients WHERE client_code =?";
+                    $stmt = $this->connect()->prepare($sql);
+                    $stmt->execute([$uniqueAplhanumericCode]);
+
+                    $count = $stmt->fetchColumn();
+                    if ($count == 0) {
+                        // count == means the code is unique and can be returned as the new unique code
+                        return strtoupper($uniqueAplhanumericCode);
+                    }
+                    $numericPart++;
+                    if ($numericPart > 999) {
+                        $numericPart = 1;
+                        $thirdLetter = chr(ord($thirdLetter) + 1);
+                    }
+                    if ($thirdLetter > 'Z') {
+                        throw new Exception("Exceeded maximum alphanumeric combinations for client code.");
+                    }
+
+                    // if count == 0 is not true, this means we increment the number and try again. 
+                    $numericPart++;
+                    $thirdLetter = chr(ord($thirdLetter) + 1);
+                }
+                // $clientCode = $lessThan2Charaters . chr(rand(65, 90));
             } elseif (strlen($clientName) > 2) {
-                $clientCode = substr($nameArray[0], 0, 3);
+                $clientCode = $this->createUniqueAlphanumericCode(substr($nameArray[0], 0, 3));
+            }
+            if (strlen($clientName) == 1) {
+                $lessThan2Characters = substr($nameArray[0], 0, 1);
+                $secondLetter = 'A';
+                $thirdLetter = 'A';
+                $numericPart = 1;
+
+                while (true) {
+                    // $numericPart++;
+                    // if AAA1
+                    // increase to AAA2 (NUM > 2) INCREASE  3RD AND RESET NUM
+                    // if we increase again
+                    // result should be AAB1 
+                    // Increase to AAB2 IF 3rd > B and NUM > 2 
+                    // INCREASE TO ABA1 increase second, reset second and num
+
+                    $uniqueAplhanumericCode = $lessThan2Characters . $secondLetter . $thirdLetter . sprintf("%03d", $numericPart);
+
+                    // check if the code exists in the database
+                    $sql = "SELECT COUNT(*) FROM clients WHERE client_code =?";
+                    $stmt = $this->connect()->prepare($sql);
+                    $stmt->execute([$uniqueAplhanumericCode]);
+
+                    $count = $stmt->fetchColumn();
+                    if ($count == 0) {
+                        // count == means the code is unique and can be returned as the new unique code
+                        return strtoupper($uniqueAplhanumericCode);
+                    }
+                    $numericPart++;
+
+                    if ($numericPart > 999) {
+                        $numericPart = 1;
+                        $thirdLetter = chr(ord($thirdLetter) + 1);
+                    }
+                    if ($thirdLetter > 'Z') {
+                        $thirdLetter = 'A';
+                        $numericPart = 1;
+                        $secondLetter = chr(ord($secondLetter) + 1);
+                    }
+                    if ($secondLetter > 'Z') {
+                        throw new Exception("Exceeded maximum alphanumeric combinations for client code.");
+                    }
+                }
+                // $clientCode = $lessThan2Charaters . chr(rand(65, 90));
+            } elseif (strlen($clientName) > 2) {
+                $clientCode = $this->createUniqueAlphanumericCode(substr($nameArray[0], 0, 3));
             }
         } elseif ($nameCount == 2) {
             // If two words, take the first letter of each and add a random letter
-            $clientCode = $nameArray[0][0] . $nameArray[1][0] . $nameArray[1][1]; // Random uppercase letter
+            $clientCode = $this->createUniqueAlphanumericCode($nameArray[0][0] . $nameArray[1][0] . $nameArray[1][1]);
         } elseif ($nameCount >= 3) {
             // If three or more words, take the first letter of the first three words
-            $clientCode = $nameArray[0][0] . $nameArray[1][0] . $nameArray[2][0];
+            $clientCode = $this->createUniqueAlphanumericCode($nameArray[0][0] . $nameArray[1][0] . $nameArray[2][0]);;
         }
 
         // Return the client code in uppercase (optional but ensures uniformity)
         return strtoupper($clientCode);
     }
+
+
 
     private function createUniqueAlphanumericCode($clientCode)
     {
@@ -65,7 +142,7 @@ class Client extends Database
         $clientCode = $this->createClientCode($name);
 
         // Then we create our unique alphanumeric code
-        $uniqueCode = $this->createUniqueAlphanumericCode($clientCode);
+        // $uniqueCode = $this->createUniqueAlphanumericCode($clientCode);
 
         // SQL query to insert the client
         $sql = "INSERT INTO clients (client_name, client_code) VALUES (?, ?)";
@@ -74,7 +151,7 @@ class Client extends Database
         try {
             $conn = $this->connect();
             $stmt = $conn->prepare($sql);
-            $stmt->execute([$name, $uniqueCode]);
+            $stmt->execute([$name, $clientCode]);
             $last_id = $conn->lastInsertId();
 
             if ($last_id != null) {
@@ -126,6 +203,7 @@ class Client extends Database
     }
 
 
+
     public function countLinkedContacts($client_id)
     {
         $sql = "SELECT COUNT(*) AS contact_count FROM client_contacts WHERE client_id =?";
@@ -165,7 +243,7 @@ class Client extends Database
     public function fetchClientsWithLinkedContacts()
     {
 
-        $sql = "SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts
+        $sql = "SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts, cl.client_id
                 FROM clients cl
                 LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
                 GROUP BY cl.client_id
@@ -246,6 +324,43 @@ class Client extends Database
             }
         } else {
             return []; // Return an empty array if no client_id is provided
+        }
+    }
+    public function searchUnlinkedClients($contact_id, $search_term)
+    {
+        if (!empty($contact_id) && !empty($search_term)) {
+            $sql = "SELECT cl.client_id, cl.client_name, cl.client_code
+                FROM clients cl
+                LEFT JOIN client_contacts cc 
+                ON cl.client_id = cc.client_id AND cc.contact_id = ?
+                WHERE cc.contact_id IS NULL
+                && (cl.client_name LIKE ? OR cl.client_code LIKE ?);";
+            try {
+                $stmt = $this->connect()->prepare($sql);
+                // Add wildcards for partial matching
+                $search_term = '%' . $search_term . '%';
+                $stmt->execute([$contact_id, $search_term, $search_term]);
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                error_log("Error searching unlinked clients: " . $e->getMessage());
+                return [];
+            }
+        } else {
+            return []; // Return an empty array if input is invalid
+        }
+    }
+    public function fetchById($client_id)
+    {
+        try {
+            $sql = "SELECT * FROM clients WHERE client_id=?";
+            $stmt = $this->connect()->prepare($sql);
+            $stmt->execute([$client_id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+            //code...
+        } catch (PDOException $e) {
+            //throw $th;
+            error_log("Error fetching contact: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to fetch contact.'];
         }
     }
 }

@@ -6,7 +6,7 @@ require_once '../includes/clients.inc.php';
     <h1>Create a new contact</h1>
     <ul class="nav nav-tabs">
         <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#home">General</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1" id="contacts_tab">Clients</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu1" id="clients_tab">Clients</a></li>
     </ul>
 
     <div class="tab-content">
@@ -21,30 +21,33 @@ require_once '../includes/clients.inc.php';
                             </button>
                         </div>
                         <div class="modal-body modal-lg bd-example-modal-lg">
-                            <div class="container-md mt-5">
-                                <form action="" method="post" id="linking_from" class="form">
-                                    <!-- Hidden input for client_id -->
-                                    <input type="hidden" name="client_id" value="" id="contact_id_input">
-                                    <table class="table table-striped-columns table-bordered" id="contactsTable">
-                                        <tbody>
+                            <div class="container-md">
+                                <!-- Search Field -->
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="searchClients" placeholder="Search by name or code...">
+                                </div>
+                                <!-- Client Table -->
+                                <form action="" method="post" id="linking_form" class="form">
+                                    <!-- Hidden input for contact_id -->
+                                    <input type="hidden" name="contact_id" value="" id="contact_id_input">
+                                    <table class="table table-striped table-bordered" id="contactsTable">
+                                    <tbody>
                                             <tr>
                                                 <td colspan="4">No contacts found.</td>
                                             </tr>
                                         </tbody>
-
                                     </table>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    </div>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" id="save_link">Save changes</button>
-
                                 </form>
-
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="save_link" data-toggle="modal">Save changes</button>
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-- Default Form -->
             <form action="" method="post" id="contact_create">
                 <div class="mb-3">
@@ -80,166 +83,20 @@ require_once '../includes/clients.inc.php';
     </div>
 
 </div>
+<script src="../scripts/contacts/add-new-contact.js"></script>
+<script src="../scripts/contacts/launch-modal.js"></script>
+<script src="../scripts/contacts/components/linked-clients-table.js"></script>
+<script src="../scripts/contacts/save-selected-clients.js"></script>
+<script src="../scripts/helper-functions/delete-link.js"></script>
+<script src="../scripts/helper-functions/error-handlers.js"></script>
+<script src="../scripts/contacts/search-for-available-clients.js"></script>
 
 <script>
-    document.getElementById('contact_create').addEventListener('submit', async function(e) {
-        e.preventDefault(); // Prevent the default form submission
-        const formData = new FormData(this); // Collect form data
-        console.log("this:", formData)
-
-        try {
-            // AJAX
-            const response = await fetch('../includes/create-contacts.inc.php', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const result = await response.json(); // Parse JSON response
-            console.log("Result", result)
-
-            if (result.status === 'success') {
-
-                const contactEmailInput = document.getElementById('contact_email');
-                const contactNameInput = document.getElementById('contact_name');
-                const contactSurnameInput = document.getElementById('contact_surname');
-
-                const saveClientBtn = document.getElementById('save_client');
-                const linkClientBtn = document.getElementById('modalTriggerButton');
-                const errorContainer = document.getElementById("error-container");
-                errorContainer.innerHTML = "";
-                if (contactEmailInput && contactNameInput && contactSurnameInput) {
-                    contactEmailInput.value = result.data.data.contact_email;
-                    contactNameInput.value = result.data.data.contact_name;
-                    contactSurnameInput.value = result.data.data.contact_surname
-
-                    linkClientBtn.style = "display: visible";
-                    saveClientBtn.style = "display:none";
-                } else {
-                    console.error('Input with ID "disabledTextInput" not found.');
-                }
-
-                const contactIdInput = document.getElementById('contact_id_input');
-                if (contactIdInput) {
-                    console.log("data res", contactIdInput, result.data.data.contact_id)
-                    contactIdInput.value = result.data.data.contact_id;
-                }
-            } else if (result.errors) {
-                displayErrors(result.errors)
-            } else {
-                console.error('Failed response:', result);
-                alert(result.message || 'Submission failed.');
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-            alert('An unexpected error occurred. Please try again.');
-        }
-    });
     // document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('modalTriggerButton').addEventListener('click', async function() {
-        console.log("clicked");
-        const contactIdInput = document.getElementById('contact_id_input');
-        if (!contactIdInput || !contactIdInput.value) {
-            alert("contact ID is required!");
-            return;
-        }
-        const contactId = contactIdInput.value;
-        console.log("Client ID:", contactId);
-        try {
-            const response = await fetch(`../includes/fetch-available-clients.inc.php?contact_id=${encodeURIComponent(contactId)}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const contacts = await response.json();
-            console.log("Response:", contacts.availableClients);
-            if (contacts.availableClients && contacts.availableClients.length > 0) {
-                const tableBody = document.querySelector('.form #contactsTable tbody');
-                tableBody.innerHTML = ''; // Clear existing rows
 
-                contacts.availableClients.forEach(contact => {
-                    const row = document.createElement('tr');
-                    console.log(contact);
-                    row.innerHTML = `
-                    <td>${contact.client_name}</td>
-                    <td>${contact.client_code}</td>
-                    <td><input type="checkbox" class="form-check-input" value="${contact.client_id}"></td>
-                `;
-                    tableBody.appendChild(row);
-                });
-
-                // Show the modal
-                document.getElementById('contactsModal').style.display = 'block';
-            } else {
-                alert('No available contacts found.');
-            }
-        } catch (error) {
-            console.error("Error fetching contacts:", error);
-        }
-    });
     // });
-    document.getElementById("save_link").addEventListener('click', async function() {
-        const contactId = document.getElementById("contact_id_input");
-        const selectedClients = Array.from(document.querySelectorAll('#contactsTable input[type="checkbox"]:checked'))
-            .map(checkbox => checkbox.value);
-        console.log(selectedClients)
-        if (selectedClients.length === 0) {
-            alert('No contacts selected.');
-            return;
-        }
-        console.log("Contact Id:", contactId.value, 'selected clients:', selectedClients)
 
-        try {
-            console.log("before:")
 
-            const response = await fetch('../includes/link-contact-to-client.inc.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contact_id: contactId.value,
-                    client_ids: selectedClients,
-                }),
-            });
-            console.log("response:", response.status)
-            if (response.status === 200) {
-                alert('Clients linked successfully!');
-                $('#exampleModalCenter').modal('hide');
-            } else {
-                alert(result.message || 'Failed to link contacts.');
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    })
-    document.getElementById("contacts_tab").addEventListener("click", async function() {
-        const contactId = document.getElementById("contact_id_input");
-        console.log(contactId)
-        if (contactId.value !== 0) {
-            try {
-                const response = await fetch("../includes/fetch-linked-clients.inc.php", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contact_id: contactId.value,
-                    }),
-                })
-                const result = await response.json();
-                console.log("Response from server:", result);
-
-                if (result.status === "success") {
-                    const clients = result.linkedClients;
-                    renderClientsTable(clients, contactId);
-                } else {
-                    console.error("Server Error:", result.message);
-                }
-            } catch (error) {
-                console.error("An unexpected error occurred:", error);
-            }
-        }
-
-    })
 
     async function ConfirmDelete(client_id, contact_id) {
         console.log("IDS RECIEVED", client_id, contact_id);
@@ -271,62 +128,6 @@ require_once '../includes/clients.inc.php';
 
         }
 
-    }
-
-    function displayErrors(errors) {
-        if (Object.keys(errors).length > 0) {
-            const errorContainer = document.getElementById("error-container");
-            errorContainer.innerHTML = "";
-
-            // Iterate through the errors object
-            for (const [field, message] of Object.entries(errors)) {
-                const errorRow = document.createElement("div");
-                errorRow.innerHTML = `<p>${message}</p>`;
-                errorRow.className = "form-error";
-                errorContainer.appendChild(errorRow);
-            }
-        }
-    }
-
-
-    function renderClientsTable(clients, contactId) {
-        const tableContainer = document.getElementById("contacts_table_container");
-        // Clear previous content
-        tableContainer.innerHTML = "";
-
-        if (clients.length > 0) {
-            // Create table element
-            const table = document.createElement("table");
-            table.className = "table table-bordered";
-
-            // Create table header
-            const thead = document.createElement("thead");
-            thead.innerHTML = `
-            <tr>
-                <th>Client Name</th>
-                <th>Client Code</th>
-                <th></th>
-            </tr>
-        `;
-            table.appendChild(thead);
-
-            // Create table body
-            const tbody = document.createElement("tbody");
-            clients.forEach(client => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                <td>${client.client_name}</td>
-                <td>${client.client_code}</td>
-                <td><a onclick="return ConfirmDelete(${client.client_id},${contactId.value});" class="" id="unlinkClient">Unlink Client</a></td>
-            `;
-                tbody.appendChild(row);
-            });
-
-            table.appendChild(tbody);
-            tableContainer.appendChild(table); // Append table to the container
-        } else {
-            tableContainer.innerHTML = "<p>No clients found.</p>";
-        }
     }
 </script>
 
