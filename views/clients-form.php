@@ -22,10 +22,13 @@ require_once '../includes/clients.inc.php';
                         </div>
                         <div class="modal-body modal-lg bd-example-modal-lg">
                             <div class="container-md mt-5">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="searchContacts" placeholder="Search by name or code...">
+                                </div>
                                 <form action="" method="post" id="linking_from" class="form">
                                     <!-- Hidden input for client_id -->
                                     <input type="hidden" name="client_id" value="" id="client_id_input">
-                                    <table class="table table-striped-columns table-bordered" id="contactsTable">
+                                    <table class="table table-striped-columns table-bordered " id="contactsTable">
                                         <tbody>
                                             <tr>
                                                 <td colspan="4">No contacts found.</td>
@@ -76,14 +79,15 @@ require_once '../includes/clients.inc.php';
 </div>
 <script src="../scripts/clients/add-new-client.js"></script>
 <script src="../scripts/clients/launch-modal.js"></script>
-<script src="../scripts/clients/components/contact-tab.js"></script>
+<script src="../scripts/clients/search-clients.js"></script>
+<script src="../scripts/clients/components/linked-contacts-table.js"></script>
 <script src="../scripts/clients/save-selected-contacts.js"></script>
 <script src="../scripts/helper-functions/delete-link.js"></script>
 <script src="../scripts/helper-functions/error-handlers.js"></script>
 
 <script>
     // document.addEventListener('DOMContentLoaded', () => {
- 
+
 
 
 

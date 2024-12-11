@@ -98,10 +98,10 @@ class Contact extends Database
     {
         if ($client_id) {
             $sql = "SELECT c.contact_id, c.contact_name, c.contact_surname, c.contact_email
-        FROM contacts c
-        LEFT JOIN client_contacts cc 
-        ON c.contact_id = cc.contact_id AND cc.client_id = ?
-        WHERE cc.client_id IS NULL";
+                    FROM contacts c
+                    LEFT JOIN client_contacts cc 
+                    ON c.contact_id = cc.contact_id AND cc.client_id = ?
+                    WHERE cc.client_id IS NULL";
             try {
                 $stmt = $this->connect()->prepare($sql);
                 $stmt->execute([$client_id]); // Pass the client_id safely
@@ -139,8 +139,6 @@ class Contact extends Database
             $sql = "SELECT * FROM contacts WHERE contact_email=?";
             $stmt = $this->connect()->prepare($sql);
             $stmt->execute([$contact_email]);
-            // $contact = $stmt->fetch(PDO::FETCH_ASSOC);
-            // echo json_encode(['status' => 'success', 'contact' => $contact]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
 
             //code...
@@ -159,7 +157,7 @@ class Contact extends Database
             $stmt = $conn->prepare($sqlFetch);
             $stmt->execute([$contact_id]);
             $contact = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
             if ($contact) {
                 // Contact found; proceed to update
                 $sqlUpdate = 'UPDATE contacts SET contact_name=?, contact_surname=?, contact_email=? WHERE contact_id=?';
@@ -180,7 +178,27 @@ class Contact extends Database
             return ['success' => false, 'message' => 'Failed to fetch contact.'];
         }
     }
-
-    
-    
+    public function searchUnlinkedContacts($client_id, $search_term)
+    {
+        if (!empty($client_id) && !empty($search_term)) {
+            $sql = "SELECT co.contact_id, co.contact_name, co.contact_email, co.contact_surname
+                    FROM contacts co
+                    LEFT JOIN client_contacts cc 
+                    ON co.contact_id = cc.contact_id AND cc.client_id = ?
+                    WHERE cc.client_id IS NULL
+                    && (co.contact_name LIKE ? OR co.contact_email LIKE ? OR co.contact_surname LIKE ?);";
+            try {
+                $stmt = $this->connect()->prepare($sql);
+                // Add wildcards for partial matching
+                $search_term = '%' . $search_term . '%';
+                $stmt->execute([$client_id, $search_term, $search_term, $search_term]);
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                error_log("Error searching unlinked contacts: " . $e->getMessage());
+                return [];
+            }
+        } else {
+            return []; // Return an empty array if input is invalid
+        }
+    }
 }

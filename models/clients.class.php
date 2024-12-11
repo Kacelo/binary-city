@@ -243,7 +243,7 @@ class Client extends Database
     public function fetchClientsWithLinkedContacts()
     {
 
-        $sql = "SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts
+        $sql = "SELECT cl.client_name AS name, cl.client_code AS code, COUNT(cc.contact_id) AS linked_contacts, cl.client_id
                 FROM clients cl
                 LEFT JOIN client_contacts cc ON cl.client_id = cc.client_id
                 GROUP BY cl.client_id
@@ -347,6 +347,20 @@ class Client extends Database
             }
         } else {
             return []; // Return an empty array if input is invalid
+        }
+    }
+    public function fetchById($client_id)
+    {
+        try {
+            $sql = "SELECT * FROM clients WHERE client_id=?";
+            $stmt = $this->connect()->prepare($sql);
+            $stmt->execute([$client_id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+            //code...
+        } catch (PDOException $e) {
+            //throw $th;
+            error_log("Error fetching contact: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to fetch contact.'];
         }
     }
 }

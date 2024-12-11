@@ -29,7 +29,7 @@ require_once '../includes/clients.inc.php';
                                 <!-- Client Table -->
                                 <form action="" method="post" id="linking_form" class="form">
                                     <!-- Hidden input for contact_id -->
-                                    <input type="" name="contact_id" value="" id="contact_id_input">
+                                    <input type="hidden" name="contact_id" value="" id="contact_id_input">
                                     <table class="table table-striped table-bordered" id="contactsTable">
                                     <tbody>
                                             <tr>
@@ -42,7 +42,7 @@ require_once '../includes/clients.inc.php';
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="save_link">Save changes</button>
+                            <button type="button" class="btn btn-primary" id="save_link" data-toggle="modal">Save changes</button>
                         </div>
                     </div>
                 </div>

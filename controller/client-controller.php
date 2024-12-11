@@ -82,3 +82,16 @@ class SearchAvailableClientsController extends Client
         return $this->searchUnlinkedClients($this->contact_id, $this->search_term);
     }
 }
+
+class FetchClientByIdController extends Client
+{
+    private $client_id;
+    public function __construct($client_id)
+    {
+        $this->client_id = $client_id;
+    }
+    public function fetchClientById()
+    {
+        return $this->fetchById($this->client_id);
+    }
+}

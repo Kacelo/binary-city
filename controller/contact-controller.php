@@ -87,6 +87,22 @@ class UpdateContactDetails extends Contact
         return $this->updateContactDetails($this->contact_name, $this->contact_surname, $this->contact_email, $this->contact_id);
     }
 }
+class SearchAvailableContactsController extends Contact
+{
+    private $client_id;
+    private $search_term;
+
+    public function __construct($client_id, $search_term)
+    {
+        $this->client_id = $client_id;
+        $this->search_term = $search_term;
+    }
+
+    public function searchAvailableContacts()
+    {
+        return $this->searchUnlinkedContacts($this->client_id, $this->search_term);
+    }
+}
 class FetchContactByEmail extends Contact
 {
     private $contact_email;
